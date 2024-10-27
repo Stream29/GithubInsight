@@ -1,0 +1,1 @@
+expect fun score(url: String): Int
