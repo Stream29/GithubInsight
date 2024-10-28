@@ -66,11 +66,11 @@ kotlin {
 }
 
 android {
-    namespace = "compose.project.demo"
+    namespace = "io.github.stream29.githubinsight"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "compose.project.demo"
+        applicationId = "io.github.stream29.githubinsight"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -98,11 +98,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "compose.project.demo.MainKt"
+        mainClass = "io.github.stream29.githubinsight.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "compose.project.demo"
+            packageName = "io.github.stream29.githubinsight"
             packageVersion = "1.0.0"
         }
     }
