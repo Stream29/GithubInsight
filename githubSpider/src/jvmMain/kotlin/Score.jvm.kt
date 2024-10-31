@@ -1,1 +1,0 @@
-actual fun score(url: String): Int = 98
