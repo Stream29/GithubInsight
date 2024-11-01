@@ -3,6 +3,7 @@ package io.github.stream29.githubinsight
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.json.Json
 
 actual class GithubApiProvider actual constructor(
@@ -12,14 +13,19 @@ actual class GithubApiProvider actual constructor(
         ignoreUnknownKeys = true
     }
 
-    actual suspend fun fetchUser(username: String): User {
-        val responsBody = httpClient.get("https://api.github.com/users/$username") {
+    actual suspend fun <T> fetch(url: String, serializer: DeserializationStrategy<T>): T {
+        val responsBody = httpClient.get(url) {
             headers {
                 append("Authorization", "Bearer $authToken")
             }
             contentType(ContentType.Application.Json)
         }.bodyAsText()
-        val body = json.decodeFromString<User>(responsBody)
+        val body = json.decodeFromString(serializer, responsBody)
         return body
     }
+
+    actual suspend fun fetchUser(username: String): User {
+        return fetch("$baseUserUrl/$username", User.serializer())
+    }
+
 }
