@@ -144,6 +144,29 @@ data class License(
 )
 
 @Serializable
+data class ReleaseResponse(
+    val nodeId: String,
+    val author: UserResponse,
+    val name: String,
+    val prerelease: Boolean,
+    val createdAt: String,
+    val publishedAt: String,
+    val assets: AssetsResponse,
+    val body: String
+)
+
+@Serializable
+data class AssetsResponse(
+    val nodeId: String,
+    val uploader: UserResponse,
+    val state: String,
+    val size: Int,
+    val downloadCount: Int,
+    val createdAt: String,
+    val updatedAt: String,
+)
+
+@Serializable
 data class CommitResponse(
     val sha: String,
     val message: String,

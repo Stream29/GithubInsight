@@ -67,7 +67,7 @@ data class Repository(
 )
 
 data class Release(
-    val id: Int,
+    val nodeId: String,
     val author: User,
     val name: String,
     val prerelease: Boolean,
@@ -78,7 +78,7 @@ data class Release(
 )
 
 data class Assets(
-    val id: Int,
+    val nodeId: String,
     val uploader: User,
     val state: String,
     val size: Int,
