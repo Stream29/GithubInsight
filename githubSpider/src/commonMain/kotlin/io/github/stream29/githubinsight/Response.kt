@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
+data class UserResponse(
     val login: String,
     val id: Int,
     @SerialName("node_id")
@@ -20,20 +20,12 @@ data class User(
     val followersUrl: String,
     @SerialName("following_url")
     val followingUrl: String,
-    @SerialName("gists_url")
-    val gistsUrl: String,
     @SerialName("starred_url")
     val starredUrl: String,
     @SerialName("subscriptions_url")
     val subscriptionsUrl: String,
-    @SerialName("organizations_url")
-    val organizationsUrl: String,
     @SerialName("repos_url")
     val reposUrl: String,
-    @SerialName("events_url")
-    val eventsUrl: String,
-    @SerialName("received_events_url")
-    val receivedEventsUrl: String,
     val type: String,
     @SerialName("site_admin")
     val siteAdmin: Boolean,
@@ -50,8 +42,6 @@ data class User(
     val publicRepos: Int,
     @SerialName("public_gists")
     val publicGists: Int,
-    val followers: Int,
-    val following: Int,
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("updated_at")
@@ -62,38 +52,26 @@ data class User(
 )
 
 @Serializable
-data class Repository(
+data class RepositoryResponse(
     val id: Int,
     @SerialName("node_id")
     val nodeId: String,
     val name: String,
     @SerialName("full_name")
     val fullName: String,
-    val owner: User? = null,
+    val owner: UserResponse? = null,
     val private: Boolean,
     @SerialName("html_url")
     val htmlUrl: String,
     val description: String? = null,
     val fork: Boolean,
     val url: String,
-    @SerialName("archive_url")
-    val archiveUrl: String,
-    @SerialName("assignees_url")
-    val assigneesUrl: String,
-    @SerialName("branches_url")
-    val branchesUrl: String,
-    @SerialName("comments_url")
-    val commentsUrl: String,
     @SerialName("commits_url")
     val commitsUrl: String,
     @SerialName("contributors_url")
     val contributorsUrl: String,
-    @SerialName("events_url")
-    val eventsUrl: String,
     @SerialName("forks_url")
     val forksUrl: String,
-    @SerialName("git_commits_url")
-    val gitCommitsUrl: String,
     @SerialName("issue_comment_url")
     val issueCommentUrl: String,
     @SerialName("issue_events_url")
@@ -102,40 +80,19 @@ data class Repository(
     val issuesUrl: String,
     @SerialName("languages_url")
     val languagesUrl: String,
-    @SerialName("merges_url")
-    val mergesUrl: String,
-    @SerialName("milestones_url")
-    val milestonesUrl: String,
-    @SerialName("notifications_url")
-    val notificationsUrl: String,
-    @SerialName("pulls_url")
-    val pullsUrl: String,
     @SerialName("releases_url")
     val releasesUrl: String,
     @SerialName("stargazers_url")
     val stargazersUrl: String,
-    @SerialName("statuses_url")
-    val statusesUrl: String,
-    @SerialName("subscriptions_url")
-    val subscriptionsUrl: String,
-    @SerialName("tags_url")
-    val tagsUrl: String,
-    @SerialName("teams_url")
-    val teamsUrl: String,
     @SerialName("forks_count")
     val forksCount: Int,
-    val forks: Int,
     @SerialName("stargazers_count")
     val stargazersCount: Int,
     @SerialName("watchers_count")
     val watchersCount: Int,
     val size: Int,
-    @SerialName("default_branch")
-    val defaultBranch: String,
     @SerialName("open_issues_count")
     val openIssuesCount: Int,
-    @SerialName("is_template")
-    val isTemplate: Boolean,
     val topics: List<String>,
     @SerialName("has_issues")
     val hasIssues: Boolean,
@@ -159,18 +116,6 @@ data class Repository(
     @SerialName("updated_at")
     val updatedAt: String,
     val permissions: Permissions,
-    @SerialName("allow_rebase_merge")
-    val allowRebaseMerge: Boolean,
-    @SerialName("template_repository")
-    val templateRepository: Repository? = null,
-    @SerialName("allow_squash_merge")
-    val allowSquashMerge: Boolean,
-    @SerialName("allow_auto_merge")
-    val allowAutoMerge: Boolean,
-    @SerialName("delete_branch_on_merge")
-    val deleteBranchOnMerge: Boolean,
-    @SerialName("allow_merge_commit")
-    val allowMergeCommit: Boolean,
     @SerialName("allow_forking")
     val allowForking: Boolean,
     @SerialName("subscribers_count")
@@ -178,7 +123,6 @@ data class Repository(
     @SerialName("network_count")
     val networkCount: Int,
     val license: License,
-    val organization: Organization,
 )
 
 @Serializable
@@ -200,37 +144,56 @@ data class License(
 )
 
 @Serializable
-data class Organization(
-    val login: String,
-    val id: Int,
+data class ReleaseResponse(
     @SerialName("node_id")
     val nodeId: String,
-    @SerialName("avatar_url")
-    val avatarUrl: String,
-    @SerialName("gravatar_id")
-    val gravatarId: String? = null,
-    val url: String,
-    @SerialName("html_url")
-    val htmlUrl: String,
-    @SerialName("followers_url")
-    val followersUrl: String,
-    @SerialName("following_url")
-    val followingUrl: String,
-    @SerialName("gists_url")
-    val gistsUrl: String,
-    @SerialName("starred_url")
-    val starredUrl: String,
-    @SerialName("subscriptions_url")
-    val subscriptionsUrl: String,
-    @SerialName("organizations_url")
-    val organizationsUrl: String,
-    @SerialName("repos_url")
-    val reposUrl: String,
-    @SerialName("events_url")
-    val eventsUrl: String,
-    @SerialName("received_events_url")
-    val receivedEventsUrl: String,
-    val type: String,
-    @SerialName("site_admin")
-    val siteAdmin: Boolean,
+    val author: UserResponse,
+    val name: String,
+    val prerelease: Boolean,
+    @SerialName("created_at")
+    val createdAt: String,
+    @SerialName("published_at")
+    val publishedAt: String,
+    val assets: AssetsResponse,
+    val body: String
 )
+
+@Serializable
+data class AssetsResponse(
+    @SerialName("node_id")
+    val nodeId: String,
+    val uploader: UserResponse,
+    val state: String,
+    val size: Int,
+    @SerialName("download_count")
+    val downloadCount: Int,
+    @SerialName("created_at")
+    val createdAt: String,
+    @SerialName("updated_at")
+    val updatedAt: String,
+)
+
+@Serializable
+data class CommitResponse(
+    val sha: String,
+    val message: String,
+    val author: UserResponse,
+    val committer: UserResponse,
+)
+
+@Serializable
+data class IssueResponse(
+    @SerialName("node_id")
+    val nodeId: String,
+    val title: String,
+    val user: UserResponse,
+)
+
+@Serializable
+data class IssueEventResponse(
+    @SerialName("node_id")
+    val nodeId: String,
+    val actor: UserResponse,
+    val event: String,
+)
+
