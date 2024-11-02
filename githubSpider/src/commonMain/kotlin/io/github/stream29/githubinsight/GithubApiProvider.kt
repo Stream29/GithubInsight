@@ -9,4 +9,5 @@ expect class GithubApiProvider(
     suspend fun fetchUser(username: String): User
 }
 
-const val baseUserUrl = "https://api.github.com/users"
+const val baseUrl = "https://api.github.com"
+const val baseUserUrl = "$baseUrl/users"
