@@ -1,3 +1,4 @@
+import io.github.stream29.githubinsight.analysis.stopSequence
 import io.github.stream29.langchain4kt.api.baiduqianfan.QianfanApiProvider
 import io.github.stream29.langchain4kt.api.baiduqianfan.QianfanGenerationConfig
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiApiProvider
