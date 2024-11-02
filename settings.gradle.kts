@@ -25,6 +25,13 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven {
+            url = uri("https://maven.pkg.github.com/CJGroup/langchain4kt")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")!!
+                password = System.getenv("GITHUB_TOKEN")!!
+            }
+        }
     }
 }
 
