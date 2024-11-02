@@ -24,8 +24,8 @@ actual class GithubApiProvider actual constructor(
         return body
     }
 
-    actual suspend fun fetchUser(username: String): User {
-        return fetch("$baseUserUrl/$username", User.serializer())
+    actual suspend fun fetchUser(username: String): UserResponse {
+        return fetch("$baseUserUrl/$username", UserResponse.serializer())
     }
 
 }
