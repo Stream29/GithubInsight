@@ -145,11 +145,14 @@ data class License(
 
 @Serializable
 data class ReleaseResponse(
+    @SerialName("node_id")
     val nodeId: String,
     val author: UserResponse,
     val name: String,
     val prerelease: Boolean,
+    @SerialName("created_at")
     val createdAt: String,
+    @SerialName("published_at")
     val publishedAt: String,
     val assets: AssetsResponse,
     val body: String
@@ -157,12 +160,16 @@ data class ReleaseResponse(
 
 @Serializable
 data class AssetsResponse(
+    @SerialName("node_id")
     val nodeId: String,
     val uploader: UserResponse,
     val state: String,
     val size: Int,
+    @SerialName("download_count")
     val downloadCount: Int,
+    @SerialName("created_at")
     val createdAt: String,
+    @SerialName("updated_at")
     val updatedAt: String,
 )
 
@@ -176,6 +183,7 @@ data class CommitResponse(
 
 @Serializable
 data class IssueResponse(
+    @SerialName("node_id")
     val nodeId: String,
     val title: String,
     val user: UserResponse,
@@ -183,6 +191,7 @@ data class IssueResponse(
 
 @Serializable
 data class IssueEventResponse(
+    @SerialName("node_id")
     val nodeId: String,
     val actor: UserResponse,
     val event: String,
