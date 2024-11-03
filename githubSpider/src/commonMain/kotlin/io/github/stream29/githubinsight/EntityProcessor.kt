@@ -1,7 +1,7 @@
 package io.github.stream29.githubinsight
 
 expect class EntityProcessor() {
-    fun process()
+    fun process(responseCollection: ResponseCollection): User
     fun toUser(userResponse: UserResponse): User
     fun toRepositories(repositoriesResponse: List<RepositoryResponse>): List<Repository>
     fun toOrganizations(organizationsResponse: List<OrganizationResponse>): List<Organization>
