@@ -36,8 +36,8 @@ actual class GithubApiProvider actual constructor(
     }
 
     actual suspend fun fetchOrganizations(orgsUrl: String): List<OrganizationResponse> {
-        val orgJson = fetch(orgsUrl)
-        return decodeFromString<List<OrganizationResponse>>(orgJson)
+        val orgsJson = fetch(orgsUrl)
+        return decodeFromString<List<OrganizationResponse>>(orgsJson)
     }
 
     actual suspend fun fetchOrganization(orgUrl: String): OrganizationResponse {

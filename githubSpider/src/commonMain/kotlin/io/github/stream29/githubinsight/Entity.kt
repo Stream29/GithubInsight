@@ -1,7 +1,5 @@
 package io.github.stream29.githubinsight
 
-import kotlinx.serialization.SerialName
-
 data class User (
     val id: Int,
     val login: String,
