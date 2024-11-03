@@ -27,6 +27,9 @@ actual class GithubApiProvider actual constructor(
         return responseBody
     }
 
+    actual suspend fun fetchAll(username: String) {
+    }
+
     actual suspend fun fetchUser(username: String): UserResponse {
         val userJson = fetch("$baseUserUrl/$username")
         return decodeFromString<UserResponse>(userJson)
