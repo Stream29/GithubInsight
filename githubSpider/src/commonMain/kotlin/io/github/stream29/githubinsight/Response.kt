@@ -12,7 +12,7 @@ data class ResponseCollection(
 @Serializable
 data class UserResponse(
     val login: String,
-    val id: Int,
+    val id: Long,
     @SerialName("node_id")
     val nodeId: String,
     @SerialName("avatar_url")
@@ -47,21 +47,21 @@ data class UserResponse(
     @SerialName("twitter_username")
     val twitterUsername: String? = null,
     @SerialName("public_repos")
-    val publicRepos: Int? = null,
+    val publicRepos: Long? = null,
     @SerialName("public_gists")
-    val publicGists: Int? = null,
+    val publicGists: Long? = null,
     @SerialName("created_at")
     val createdAt: String? = null,
     @SerialName("updated_at")
     val updatedAt: String? = null,
     @SerialName("disk_usage")
-    val diskUsage: Int? = null,
-    val collaborators: Int? = null
+    val diskUsage: Long? = null,
+    val collaborators: Long? = null
 )
 
 @Serializable
 data class RepositoryResponse(
-    val id: Int,
+    val id: Long,
     @SerialName("node_id")
     val nodeId: String,
     val name: String,
@@ -93,14 +93,14 @@ data class RepositoryResponse(
     @SerialName("stargazers_url")
     val stargazersUrl: String,
     @SerialName("forks_count")
-    val forksCount: Int,
+    val forksCount: Long,
     @SerialName("stargazers_count")
-    val stargazersCount: Int,
+    val stargazersCount: Long,
     @SerialName("watchers_count")
-    val watchersCount: Int,
-    val size: Int,
+    val watchersCount: Long,
+    val size: Long,
     @SerialName("open_issues_count")
-    val openIssuesCount: Int,
+    val openIssuesCount: Long,
     val topics: List<String>,
     @SerialName("has_issues")
     val hasIssues: Boolean,
@@ -127,9 +127,9 @@ data class RepositoryResponse(
     @SerialName("allow_forking")
     val allowForking: Boolean,
     @SerialName("subscribers_count")
-    val subscribersCount: Int? = null,
+    val subscribersCount: Long? = null,
     @SerialName("network_count")
-    val networkCount: Int? = null,
+    val networkCount: Long? = null,
     val license: License? = null,
     val releasesResponse: List<ReleaseResponse>? = null,
     val commitsResponse: List<CommitResponse>? = null,
@@ -176,9 +176,9 @@ data class AssetsResponse(
     val nodeId: String,
     val uploader: UserResponse,
     val state: String,
-    val size: Int,
+    val size: Long,
     @SerialName("download_count")
-    val downloadCount: Int,
+    val downloadCount: Long,
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("updated_at")
@@ -222,6 +222,6 @@ data class OrganizationResponse(
     @SerialName("is_verified")
     val isVerified: Boolean? = null,
     @SerialName("public_repos")
-    val publicRepos: Int? = null,
-    val followers: Int? = null,
+    val publicRepos: Long? = null,
+    val followers: Long? = null,
 )
