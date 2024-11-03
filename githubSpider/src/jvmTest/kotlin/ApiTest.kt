@@ -1,5 +1,6 @@
 import io.github.stream29.githubinsight.GithubApiProvider
 import io.github.stream29.githubinsight.User
+import io.github.stream29.githubinsight.UserResponse
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -10,11 +11,9 @@ class ApiTest {
         val githubApiProvider = GithubApiProvider(
             authToken = System.getenv("GITHUB_TOKEN")
         )
-        val response = runBlocking {
-            githubApiProvider.fetchUser(System.getenv("GITHUB_ACTOR"))
+        runBlocking {
+//            githubApiProvider.fetchAll(System.getenv("GITHUB_ACTOR"))
+            githubApiProvider.fetchAll("sakura-ryoko")
         }
-        val json = Json { prettyPrint = true }
-        val jsonString = json.encodeToString(User.serializer(), response)
-        println(jsonString)
     }
 }

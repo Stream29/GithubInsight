@@ -1,11 +1,9 @@
 package io.github.stream29.githubinsight
 
-import kotlinx.serialization.DeserializationStrategy
-
 expect class GithubApiProvider(
     authToken: String
 ) {
-    suspend fun <T> fetch(url: String, serializer: DeserializationStrategy<T>): T
+    suspend fun fetch(url: String): String
     suspend fun fetchAll(username: String)
     suspend fun fetchUser(username: String): UserResponse
     suspend fun fetchRepositories(reposUrl: String): List<RepositoryResponse>

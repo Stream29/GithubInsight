@@ -24,6 +24,8 @@ data class UserResponse(
     val starredUrl: String,
     @SerialName("subscriptions_url")
     val subscriptionsUrl: String,
+    @SerialName("organizations_url")
+    val organizationsUrl: String,
     @SerialName("repos_url")
     val reposUrl: String,
     val type: String,
@@ -39,13 +41,13 @@ data class UserResponse(
     @SerialName("twitter_username")
     val twitterUsername: String? = null,
     @SerialName("public_repos")
-    val publicRepos: Int,
+    val publicRepos: Int? = null,
     @SerialName("public_gists")
-    val publicGists: Int,
+    val publicGists: Int? = null,
     @SerialName("created_at")
-    val createdAt: String,
+    val createdAt: String? = null,
     @SerialName("updated_at")
-    val updatedAt: String,
+    val updatedAt: String? = null,
     @SerialName("disk_usage")
     val diskUsage: Int? = null,
     val collaborators: Int? = null
@@ -108,7 +110,7 @@ data class RepositoryResponse(
     val hasDiscussions: Boolean,
     val archived: Boolean,
     val disabled: Boolean,
-    val visibility: Boolean,
+    val visibility: String,
     @SerialName("pushed_at")
     val pushedAt: String,
     @SerialName("created_at")
@@ -119,10 +121,10 @@ data class RepositoryResponse(
     @SerialName("allow_forking")
     val allowForking: Boolean,
     @SerialName("subscribers_count")
-    val subscribersCount: Int,
+    val subscribersCount: Int? = null,
     @SerialName("network_count")
-    val networkCount: Int,
-    val license: License,
+    val networkCount: Int? = null,
+    val license: License? = null,
 )
 
 @Serializable
@@ -138,7 +140,7 @@ data class License(
     val name: String,
     @SerialName("spdx_id")
     val spdxId: String,
-    val url: String,
+    val url: String? = null,
     @SerialName("node_id")
     val nodeId: String,
 )
@@ -154,7 +156,7 @@ data class ReleaseResponse(
     val createdAt: String,
     @SerialName("published_at")
     val publishedAt: String,
-    val assets: AssetsResponse,
+    val assets: List<AssetsResponse>,
     val body: String
 )
 
@@ -176,7 +178,7 @@ data class AssetsResponse(
 @Serializable
 data class CommitResponse(
     val sha: String,
-    val message: String,
+    val message: String? = null,
     val author: UserResponse,
     val committer: UserResponse,
 )
