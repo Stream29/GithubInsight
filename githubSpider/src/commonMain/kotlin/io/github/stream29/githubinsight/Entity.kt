@@ -1,5 +1,7 @@
 package io.github.stream29.githubinsight
 
+import kotlinx.serialization.SerialName
+
 data class User (
     val id: Int,
     val login: String,
@@ -7,6 +9,7 @@ data class User (
     val followersList: List<User>,
     val followingList: List<User>,
     val subscriptions: List<Repository>,
+    val organizations: List<Organization>,
     val repos: List<Repository>,
     val siteAdmin: Boolean,
     val name: String? = null,
@@ -104,4 +107,15 @@ data class IssueEvent(
     val nodeId: String,
     val actor: User,
     val event: String,
+)
+
+data class Organization(
+    val login: String,
+    val nodeId: String,
+    val avatarUrl: String,
+    val description: String,
+    val email: String,
+    val isVerified: Boolean,
+    val publicRepos: Int,
+    val followers: Int,
 )

@@ -6,6 +6,8 @@ expect class GithubApiProvider(
     suspend fun fetch(url: String): String
     suspend fun fetchAll(username: String)
     suspend fun fetchUser(username: String): UserResponse
+    suspend fun fetchOrganizations(orgsUrl: String): List<OrganizationResponse>
+    suspend fun fetchOrganization(orgUrl: String): OrganizationResponse
     suspend fun fetchRepositories(reposUrl: String): List<RepositoryResponse>
     suspend fun fetchReleases(releaseUrl: String): List<ReleaseResponse>
     suspend fun fetchCommits(commitsUrl: String): List<CommitResponse>

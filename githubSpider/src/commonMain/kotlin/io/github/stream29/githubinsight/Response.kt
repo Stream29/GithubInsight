@@ -199,3 +199,19 @@ data class IssueEventResponse(
     val event: String,
 )
 
+@Serializable
+data class OrganizationResponse(
+    val login: String,
+    @SerialName("node_id")
+    val nodeId: String,
+    val url: String,
+    @SerialName("avatar_url")
+    val avatarUrl: String,
+    val description: String,
+    val email: String? = null,
+    @SerialName("is_verified")
+    val isVerified: Boolean? = null,
+    @SerialName("public_repos")
+    val publicRepos: Int? = null,
+    val followers: Int? = null,
+)

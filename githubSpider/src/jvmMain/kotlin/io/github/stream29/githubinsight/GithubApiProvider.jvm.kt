@@ -3,7 +3,6 @@ package io.github.stream29.githubinsight
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 actual class GithubApiProvider actual constructor(
@@ -29,12 +28,21 @@ actual class GithubApiProvider actual constructor(
     }
 
     actual suspend fun fetchAll(username: String) {
-
     }
 
     actual suspend fun fetchUser(username: String): UserResponse {
         val userJson = fetch("$baseUserUrl/$username")
         return decodeFromString<UserResponse>(userJson)
+    }
+
+    actual suspend fun fetchOrganizations(orgsUrl: String): List<OrganizationResponse> {
+        val orgJson = fetch(orgsUrl)
+        return decodeFromString<List<OrganizationResponse>>(orgJson)
+    }
+
+    actual suspend fun fetchOrganization(orgUrl: String): OrganizationResponse {
+        val orgJson = fetch(orgUrl)
+        return decodeFromString<OrganizationResponse>(orgJson)
     }
 
     actual suspend fun fetchRepositories(reposUrl: String): List<RepositoryResponse> {
