@@ -4,6 +4,6 @@ import androidx.compose.runtime.Composable
 import io.github.stream29.githubinsight.ui.component.Form
 
 @Composable
-fun InputKeyCard(keyMap: MutableMap<String, String>) {
-    Form(keyMap)
+fun InputKeyCard(keyMap: MutableMap<String, String>,keyList: Array<String>) {
+    Form(keyMap,"Key",keyList)
 }
