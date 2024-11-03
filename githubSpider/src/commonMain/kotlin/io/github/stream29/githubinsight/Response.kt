@@ -3,6 +3,12 @@ package io.github.stream29.githubinsight
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+data class ResponseCollection(
+    val userResponse: UserResponse,
+    val reposResponse: List<RepositoryResponse>,
+    val orgsResponse: List<OrganizationResponse>,
+)
+
 @Serializable
 data class UserResponse(
     val login: String,
@@ -125,6 +131,10 @@ data class RepositoryResponse(
     @SerialName("network_count")
     val networkCount: Int? = null,
     val license: License? = null,
+    val releasesResponse: List<ReleaseResponse>? = null,
+    val commitsResponse: List<CommitResponse>? = null,
+    val issuesResponse: List<IssueResponse>? = null,
+    val issueEventsResponse: List<IssueEventResponse>? = null,
 )
 
 @Serializable

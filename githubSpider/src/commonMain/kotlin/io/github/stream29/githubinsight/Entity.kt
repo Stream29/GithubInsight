@@ -1,6 +1,6 @@
 package io.github.stream29.githubinsight
 
-data class User (
+data class User(
     val id: Int,
     val login: String,
     val avatarUrl: String,
