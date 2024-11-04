@@ -6,20 +6,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.stream29.githubinsight.ui.card.InputKeyCard
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import io.github.stream29.githubinsight.ui.page.InputKey
 
 @Composable
-@Preview
 fun App() {
-    val userMap = remember { mutableStateMapOf("user-homepage-address" to "") }
-    val keyMap = remember { mutableStateMapOf<String, String>() }
-    val keyList = arrayOf("baidu", "gemini")
-//    var selectedItem by remember { mutableStateOf(0) }
+    var pageState by remember { mutableStateOf(0) }
     MaterialTheme {
         Row(
             modifier = Modifier.fillMaxHeight(),
@@ -29,25 +26,8 @@ fun App() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-//                InputPathCard(userMap)
-                InputKeyCard(keyMap, keyList)
+                InputKey(onStateChange = { pageState = 1 })
             }
         }
-//        Row(
-//            modifier = Modifier.fillMaxHeight(),
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.Bottom
-//        ) {
-//            BottomNavigation(
-//                windowInsets = BottomNavigationDefaults.windowInsets
-//            ) {
-//                BottomNavigationItem(
-//                    icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
-//                    label = { Text("Test") },
-//                    selected = selectedItem == 0,
-//                    onClick = { selectedItem = 0 }
-//                )
-//            }
-//        }
     }
 }

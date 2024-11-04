@@ -1,7 +1,9 @@
 package io.github.stream29.githubinsight.ui.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
@@ -35,7 +37,12 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun Form(form: MutableMap<String, String>, type: String, keyList: Array<String>? = null) {
+fun Form(
+    form: MutableMap<String, String>,
+    type: String,
+    keyList: Array<String>? = null,
+    onStateChange: () -> Unit
+) {
     val brush = remember {
         Brush.linearGradient(
             colors = listOf(Color(0xFFaa55ff), Color(0xFF55aaff), Color(0xFF9ce5ff))
@@ -80,12 +87,34 @@ fun Form(form: MutableMap<String, String>, type: String, keyList: Array<String>?
             )
         }
 
-        keyList?.let {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(top = 20.dp)
+        ) {
+            keyList?.let {
+                Button(
+                    onClick = { isMenuOpen = true },
+                    content = {
+                        Text(
+                            text = buttonText, fontSize = 24.sp, fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(0.dp, 5.dp)
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color(68, 68, 68),
+                        backgroundColor = Color.Transparent
+                    ),
+                    border = BorderStroke(3.dp, brush)
+                )
+            }
             Button(
-                onClick = { isMenuOpen = true },
+                onClick = {
+                    //TODO: send request
+                    onStateChange()
+                },
                 content = {
                     Text(
-                        text = buttonText, fontSize = 24.sp, fontWeight = FontWeight.Bold,
+                        text = "Submit", fontSize = 24.sp, fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(0.dp, 5.dp)
                     )
                 },
@@ -93,33 +122,33 @@ fun Form(form: MutableMap<String, String>, type: String, keyList: Array<String>?
                     contentColor = Color(68, 68, 68),
                     backgroundColor = Color.Transparent
                 ),
-                border = BorderStroke(3.dp, brush),
-                modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp)
-            )
-
-            DropdownMenu(
-                expanded = isMenuOpen,
-                onDismissRequest = { isMenuOpen = false },
-                offset = DpOffset(30.dp, 380.dp),
-                content = {
-                    keyList.forEach { key ->
-                        DropdownMenuItem(
-                            onClick = {
-                                form.clear()
-                                form[key] = ""
-                                isMenuOpen = !isMenuOpen
-                                buttonText = "model:$key"
-                            }
-                        ) {
-                            Text(
-                                text = key,
-                                fontSize = 24.sp
-                            )
-                        }
-                    }
-                }
+                border = BorderStroke(3.dp, brush)
             )
         }
+
+        DropdownMenu(
+            expanded = isMenuOpen,
+            onDismissRequest = { isMenuOpen = false },
+            offset = DpOffset(30.dp, 380.dp),
+            content = {
+                keyList?.forEach { key ->
+                    DropdownMenuItem(
+                        onClick = {
+                            form.clear()
+                            form[key] = ""
+                            isMenuOpen = !isMenuOpen
+                            buttonText = "model:$key"
+                        }
+                    ) {
+                        Text(
+                            text = key,
+                            fontSize = 24.sp
+                        )
+                    }
+                }
+            }
+        )
+
         Text(
             text = "Debug:\n" + form.toMap().toString(),
             modifier = Modifier.padding(0.dp, 20.dp).offset(0.dp, 60.dp),
