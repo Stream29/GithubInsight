@@ -12,6 +12,8 @@ kotlin {
             dependencies {
                 implementation(libs.langchain4kt.core)
                 implementation(libs.langchain4kt.utils)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.coroutines.run.blocking.all)
             }
         }
         val jvmTest by getting {

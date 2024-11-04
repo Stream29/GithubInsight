@@ -1,43 +1,60 @@
 package io.github.stream29.githubinsight.analysis
 
+import com.javiersc.kotlinx.coroutines.run.blocking.runBlocking
+
 @GptFunctionDsl
 fun GptFunctionBuilder.name(name: String) = apply { this.name = name }
 
 @GptFunctionDsl
-fun GptFunctionBuilder.addParameter(name: String, description: String) =
-    apply { parameters.add(GptParameter(name, description)) }
+fun GptFunctionBuilder.addParam(name: String, description: String) =
+    apply { params.add(GptParameter(name, description)) }
 
 @GptFunctionDsl
 fun GptFunctionBuilder.description(description: String) = apply { this.description = description }
 
 @GptFunctionDsl
-fun GptFunctionBuilder.resolveWith(body: (List<String>) -> String) = apply { this.resolve = body }
+fun GptFunctionBuilder.resolveWith(body: suspend (List<String>) -> String) = apply { this.resolve = body }
 
 @GptFunctionDsl
 fun GptFunction(builder: GptFunctionBuilder.() -> Unit): GptFunction {
     val apply = GptFunctionBuilder().apply(builder)
     return GptFunction(
         name = requireNotNull(apply.name),
-        parameters = apply.parameters,
+        params = apply.params,
         description = requireNotNull(apply.description),
         resolve = requireNotNull(apply.resolve)
     )
 }
 
 @GptFunctionDsl
-fun GptFunction.exampleExplained(vararg parameters: String) =
-    GptFunctionExample(this, parameters.toList(), resolve(parameters.toList()))
+fun GptFunction.exampleExplained(vararg params: String) =
+    GptFunctionExample(this, params.toList(), runBlocking { resolve(params.toList()) })
+
+@GptFunctionDsl
+fun GptFunction.exampleExplained(vararg params: String, result: (List<String>) -> String) =
+    GptFunctionExample(this, params.toList(), result(params.toList()))
 
 data class GptFunction(
     val name: String,
-    val parameters: List<GptParameter>,
+    val params: List<GptParameter>,
     val description: String,
-    val resolve: (List<String>) -> String
+    val resolve: suspend (List<String>) -> String
 )
 
 data class GptFunctionExample(
     val function: GptFunction,
-    val parameter: List<String>,
+    val params: List<String>,
+    val result: String
+)
+
+data class GptFunctionCall(
+    val functionName: String,
+    val params: List<String>
+)
+
+data class GptFunctionResult(
+    val functionName: String,
+    val params: List<String>,
     val result: String
 )
 
@@ -48,7 +65,7 @@ data class GptParameter(
 
 data class GptFunctionBuilder(
     internal var name: String? = null,
-    internal var parameters: MutableList<GptParameter> = mutableListOf(),
+    internal var params: MutableList<GptParameter> = mutableListOf(),
     internal var description: String? = null,
-    internal var resolve: ((List<String>) -> String)? = null
+    internal var resolve: (suspend (List<String>) -> String)? = null
 )
