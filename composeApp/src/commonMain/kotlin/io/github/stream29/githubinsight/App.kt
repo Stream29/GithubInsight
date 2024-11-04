@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.stream29.githubinsight.ui.page.InputKey
+import io.github.stream29.githubinsight.ui.page.InputPath
 
 @Composable
 fun App() {
@@ -26,7 +27,10 @@ fun App() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                InputKey(onStateChange = { pageState = 1 })
+                when (pageState) {
+                    0 -> InputKey { pageState = 1 }
+                    1 -> InputPath { pageState = 2 }
+                }
             }
         }
     }
