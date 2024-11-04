@@ -3,6 +3,7 @@ package io.github.stream29.githubinsight
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 actual class GithubApiProvider actual constructor(
@@ -27,7 +28,34 @@ actual class GithubApiProvider actual constructor(
         return responseBody
     }
 
-    actual suspend fun fetchAll(username: String) {
+    actual suspend fun fetchAll(username: String): ResponseCollection {
+        val userResponse = fetchUser(username)
+        val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
+            .asSequence()
+            .map {
+                runBlocking {
+                    fetchOrganization(it.url)
+                }
+            }
+            .toList()
+        val reposResponse = fetchRepositories(userResponse.reposUrl)
+            .asSequence()
+            .sortedBy { it.stargazersCount }
+            .take(limitedReposCount)
+            .toList()
+            .map { repo ->
+                repo.apply {
+                    releasesResponse = fetchReleases(repo.releasesUrl)
+                    commitsResponse = fetchCommits(repo.commitsUrl)
+                    issuesResponse = fetchIssues(repo.issuesUrl)
+                    issueEventsResponse = fetchIssueEvents(repo.issueEventsUrl)
+                }
+            }
+        return ResponseCollection(
+            userResponse,
+            reposResponse,
+            organizationsResponse,
+        )
     }
 
     actual suspend fun fetchUser(username: String): UserResponse {

@@ -7,7 +7,8 @@ actual class GithubApiProvider actual constructor(
         TODO("Not yet implemented")
     }
 
-    actual suspend fun fetchAll(username: String) {
+    actual suspend fun fetchAll(username: String): ResponseCollection {
+        TODO("Not yet implemented")
     }
 
     actual suspend fun fetchUser(username: String): UserResponse {

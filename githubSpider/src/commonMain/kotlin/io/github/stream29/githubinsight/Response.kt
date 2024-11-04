@@ -3,6 +3,7 @@ package io.github.stream29.githubinsight
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
 data class ResponseCollection(
     val userResponse: UserResponse,
     val reposResponse: List<RepositoryResponse>,
@@ -131,10 +132,10 @@ data class RepositoryResponse(
     @SerialName("network_count")
     val networkCount: Long? = null,
     val license: License? = null,
-    val releasesResponse: List<ReleaseResponse>? = null,
-    val commitsResponse: List<CommitResponse>? = null,
-    val issuesResponse: List<IssueResponse>? = null,
-    val issueEventsResponse: List<IssueEventResponse>? = null,
+    var releasesResponse: List<ReleaseResponse>? = null,
+    var commitsResponse: List<CommitResponse>? = null,
+    var issuesResponse: List<IssueResponse>? = null,
+    var issueEventsResponse: List<IssueEventResponse>? = null,
 )
 
 @Serializable
@@ -189,8 +190,8 @@ data class AssetsResponse(
 data class CommitResponse(
     val sha: String,
     val message: String? = null,
-    val author: UserResponse,
-    val committer: UserResponse,
+    val author: UserResponse? = null,
+    val committer: UserResponse? = null,
 )
 
 @Serializable
