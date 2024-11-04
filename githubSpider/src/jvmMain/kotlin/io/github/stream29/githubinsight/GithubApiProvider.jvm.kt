@@ -85,6 +85,9 @@ actual class GithubApiProvider actual constructor(
 
     actual suspend fun fetchCommits(commitsUrl: String): List<CommitResponse> {
         val commitsJson = fetch(commitsUrl.replace("{/sha}", ""))
+        if (commitsJson.contains("Git Repository is empty")) {
+            return decodeFromString<List<CommitResponse>>("[]")
+        }
         return decodeFromString<List<CommitResponse>>(commitsJson)
     }
 
