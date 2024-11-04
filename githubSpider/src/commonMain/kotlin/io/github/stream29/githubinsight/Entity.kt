@@ -1,12 +1,13 @@
 package io.github.stream29.githubinsight
 
-data class User (
-    val id: Int,
+data class User(
+    val id: Long,
     val login: String,
     val avatarUrl: String,
     val followersList: List<User>,
     val followingList: List<User>,
     val subscriptions: List<Repository>,
+    val organizations: List<Organization>,
     val repos: List<Repository>,
     val siteAdmin: Boolean,
     val name: String? = null,
@@ -17,16 +18,16 @@ data class User (
     val hireable: Boolean? = null,
     val bio: String? = null,
     val twitterUsername: String? = null,
-    val publicRepos: Int,
-    val publicGists: Int,
+    val publicRepos: Long,
+    val publicGists: Long,
     val createdAt: String,
     val updatedAt: String,
-    val diskUsage: Int? = null,
-    val collaborators: Int? = null
+    val diskUsage: Long? = null,
+    val collaborators: Long? = null
 )
 
 data class Repository(
-    val id: Int,
+    val id: Long,
     val name: String,
     val fullName: String,
     val owner: User? = null,
@@ -34,18 +35,18 @@ data class Repository(
     val description: String? = null,
     val fork: Boolean,
     val forks: List<Repository>,
-    val forksCount: Int,
+    val forksCount: Long,
     val contributors: List<User>,
     val commits: List<Commit>,
     val issues: List<Issue>,
     val issueEvents: List<IssueEvent>,
-    val openIssuesCount: Int,
+    val openIssuesCount: Long,
     val languages: List<String>,
     val releases: List<Release>,
     val stargazers: List<User>,
-    val stargazersCount: Int,
-    val watchersCount: Int,
-    val size: Int,
+    val stargazersCount: Long,
+    val watchersCount: Long,
+    val size: Long,
     val topics: List<String>,
     val hasIssues: Boolean,
     val hasProjects: Boolean,
@@ -61,8 +62,8 @@ data class Repository(
     val updatedAt: String,
     val permissions: Permissions,
     val allowForking: Boolean,
-    val subscribersCount: Int,
-    val networkCount: Int,
+    val subscribersCount: Long,
+    val networkCount: Long,
     val license: License,
 )
 
@@ -81,8 +82,8 @@ data class Assets(
     val nodeId: String,
     val uploader: User,
     val state: String,
-    val size: Int,
-    val downloadCount: Int,
+    val size: Long,
+    val downloadCount: Long,
     val createdAt: String,
     val updatedAt: String,
 )
@@ -104,4 +105,15 @@ data class IssueEvent(
     val nodeId: String,
     val actor: User,
     val event: String,
+)
+
+data class Organization(
+    val login: String,
+    val nodeId: String,
+    val avatarUrl: String,
+    val description: String,
+    val email: String,
+    val isVerified: Boolean,
+    val publicRepos: Long,
+    val followers: Long,
 )

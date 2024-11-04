@@ -4,15 +4,13 @@ import androidx.compose.runtime.Composable
 import io.github.stream29.githubinsight.ui.component.Form
 
 @Composable
-fun InputKeyCard(
+fun InputPathCard(
     keyMap: MutableMap<String, String>,
-    keyList: Array<String>,
     onStateChange: () -> Unit
 ) {
     Form(
         form = keyMap,
-        type = "Key",
-        keyList = keyList,
+        type = "Homepage Address",
         onStateChange = onStateChange
     )
 }

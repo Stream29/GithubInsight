@@ -1,19 +1,25 @@
 package io.github.stream29.githubinsight
 
-import kotlinx.serialization.DeserializationStrategy
-
 actual class GithubApiProvider actual constructor(
     authToken: String
 ) {
-    actual suspend fun <T> fetch(url: String, serializer: DeserializationStrategy<T>): T {
+    actual suspend fun fetch(url: String): String {
         TODO("Not yet implemented")
     }
 
-    actual suspend fun fetchAll(username: String) {
+    actual suspend fun fetchAll(username: String): ResponseCollection {
         TODO("Not yet implemented")
     }
 
     actual suspend fun fetchUser(username: String): UserResponse {
+        TODO("Not yet implemented")
+    }
+
+    actual suspend fun fetchOrganizations(orgsUrl: String): List<OrganizationResponse> {
+        TODO("Not yet implemented")
+    }
+
+    actual suspend fun fetchOrganization(orgUrl: String): OrganizationResponse {
         TODO("Not yet implemented")
     }
 
@@ -36,4 +42,5 @@ actual class GithubApiProvider actual constructor(
     actual suspend fun fetchIssueEvents(issueEventsUrl: String): List<IssueEventResponse> {
         TODO("Not yet implemented")
     }
+
 }
