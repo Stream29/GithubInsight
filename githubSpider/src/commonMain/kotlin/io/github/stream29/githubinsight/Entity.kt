@@ -1,5 +1,8 @@
 package io.github.stream29.githubinsight
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class User(
     val id: Long,
     val login: String,
@@ -26,6 +29,7 @@ data class User(
     val collaborators: Long? = null
 )
 
+@Serializable
 data class Repository(
     val id: Long,
     val name: String,
@@ -67,6 +71,7 @@ data class Repository(
     val license: License,
 )
 
+@Serializable
 data class Release(
     val nodeId: String,
     val author: User,
@@ -78,6 +83,7 @@ data class Release(
     val body: String
 )
 
+@Serializable
 data class Assets(
     val nodeId: String,
     val uploader: User,
@@ -88,6 +94,7 @@ data class Assets(
     val updatedAt: String,
 )
 
+@Serializable
 data class Commit(
     val sha: String,
     val message: String,
@@ -95,18 +102,21 @@ data class Commit(
     val committer: User,
 )
 
+@Serializable
 data class Issue(
     val nodeId: String,
     val title: String,
     val user: User,
 )
 
+@Serializable
 data class IssueEvent(
     val nodeId: String,
     val actor: User,
     val event: String,
 )
 
+@Serializable
 data class Organization(
     val login: String,
     val nodeId: String,
