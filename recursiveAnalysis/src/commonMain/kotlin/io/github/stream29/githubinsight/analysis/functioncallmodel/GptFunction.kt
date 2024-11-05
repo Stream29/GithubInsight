@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight.analysis
+package io.github.stream29.githubinsight.analysis.functioncallmodel
 
 import com.javiersc.kotlinx.coroutines.run.blocking.runBlocking
 

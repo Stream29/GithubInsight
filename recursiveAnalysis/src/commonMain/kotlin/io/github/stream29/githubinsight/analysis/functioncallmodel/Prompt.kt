@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight.analysis
+package io.github.stream29.githubinsight.analysis.functioncallmodel
 
 fun functionCallPrompt(examples: List<GptFunctionExample>, block: StringBuilder.() -> Unit) =
     buildString {

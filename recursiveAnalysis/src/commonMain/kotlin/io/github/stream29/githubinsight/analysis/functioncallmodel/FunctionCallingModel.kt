@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight.analysis
+package io.github.stream29.githubinsight.analysis.functioncallmodel
 
 import io.github.stream29.langchain4kt.core.ChatModel
 import kotlinx.coroutines.async

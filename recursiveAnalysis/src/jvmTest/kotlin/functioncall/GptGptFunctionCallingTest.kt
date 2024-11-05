@@ -1,6 +1,6 @@
 package functioncall
 
-import io.github.stream29.githubinsight.analysis.*
+import io.github.stream29.githubinsight.analysis.functioncallmodel.*
 import io.github.stream29.langchain4kt.core.asChatModel
 import kotlinx.coroutines.runBlocking
 import qianfanApiProvider
