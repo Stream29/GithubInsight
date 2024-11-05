@@ -10,6 +10,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(project(":githubSpider"))
                 implementation(libs.langchain4kt.core)
                 implementation(libs.langchain4kt.utils)
                 implementation(libs.kotlinx.coroutines.core)
