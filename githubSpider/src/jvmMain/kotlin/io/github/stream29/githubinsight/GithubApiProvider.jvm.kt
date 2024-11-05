@@ -3,6 +3,13 @@ package io.github.stream29.githubinsight
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
@@ -28,30 +35,36 @@ actual class GithubApiProvider actual constructor(
         return responseBody
     }
 
-    actual suspend fun fetchAll(username: String): ResponseCollection {
+    actual suspend fun fetchAll(username: String): ResponseCollection = coroutineScope {
         val userResponse = fetchUser(username)
         val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
-            .asSequence()
+            .asFlow()
             .map {
-                runBlocking {
+                async {
                     fetchOrganization(it.url)
                 }
-            }
-            .toList()
+            }.buffer()
+            .toList().awaitAll()
         val reposResponse = fetchRepositories(userResponse.reposUrl)
             .asSequence()
             .sortedBy { it.stargazersCount }
             .take(limitedReposCount)
             .toList()
             .map { repo ->
-                repo.apply {
-                    releasesResponse = fetchReleases(repo.releasesUrl)
-                    commitsResponse = fetchCommits(repo.commitsUrl)
-                    issuesResponse = fetchIssues(repo.issuesUrl)
-                    issueEventsResponse = fetchIssueEvents(repo.issueEventsUrl)
+                async {
+                    repo.apply {
+                        val release = async { fetchReleases(repo.releasesUrl) }
+                        val commit = async { fetchCommits(repo.commitsUrl) }
+                        val issues = async { fetchIssues(repo.issuesUrl) }
+                        val issueEvents = async { fetchIssueEvents(repo.issueEventsUrl) }
+                        releasesResponse = release.await()
+                        commitsResponse = commit.await()
+                        issuesResponse = issues.await()
+                        issueEventsResponse = issueEvents.await()
+                    }
                 }
-            }
-        return ResponseCollection(
+            }.awaitAll()
+        ResponseCollection(
             userResponse,
             reposResponse,
             organizationsResponse,
