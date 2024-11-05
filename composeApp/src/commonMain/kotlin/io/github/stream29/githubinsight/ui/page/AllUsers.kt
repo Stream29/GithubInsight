@@ -14,7 +14,7 @@ import io.github.stream29.githubinsight.ui.component.SelectCountry
 
 @Composable
 fun AllUsers(onStateChange: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.Start) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(verticalArrangement = Arrangement.Center) {
                 SelectCountry()
