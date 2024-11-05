@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight
 
+import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -14,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 actual class GithubApiProvider actual constructor(
+    private val httpClient: HttpClient,
     val authToken: String
 ) {
     private val json = Json {

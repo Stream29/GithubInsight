@@ -35,6 +35,8 @@ data class UserResponse(
     val organizationsUrl: String,
     @SerialName("repos_url")
     val reposUrl: String,
+    @SerialName("events_url")
+    val eventsUrl: String,
     val type: String,
     @SerialName("site_admin")
     val siteAdmin: Boolean,
