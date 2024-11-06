@@ -1,7 +1,5 @@
-package io.github.stream29.githubinsight
+package io.github.stream29.githubinsight.spider
 
-import io.github.stream29.githubinsight.spider.BalancingApiProvider
-import io.github.stream29.githubinsight.spider.Repository
 
 class Spider (
     val balancingApiProvider: BalancingApiProvider

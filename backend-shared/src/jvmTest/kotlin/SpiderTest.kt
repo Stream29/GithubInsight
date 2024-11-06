@@ -1,6 +1,7 @@
-import io.github.stream29.githubinsight.*
 import io.github.stream29.githubinsight.spider.BalancingApiProvider
 import io.github.stream29.githubinsight.spider.GithubApiProvider
+import io.github.stream29.githubinsight.spider.Spider
+import io.github.stream29.githubinsight.spider.User
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Test
