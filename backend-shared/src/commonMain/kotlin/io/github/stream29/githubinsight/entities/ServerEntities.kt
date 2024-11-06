@@ -26,30 +26,24 @@ data class UserInfo(
     val company: String? = null,
     val blog: String? = null,
     val location: String? = null,
-    val publicRepos: Int,
-    val publicGists: Int,
-    val followersAmount: Int,
-    val followingAmount: Int
 )
 
 @Serializable
 data class Repository(
     val name: String,
-    val htmlUrl: String,
-    val description: String?,
+    val description: String? = null,
     val collaborators: List<String>,
-    val teams: List<String>,
     val tags: List<String>,
 //    使用的编程语言以及使用次数
     val languages: Map<String,Int>,
-    val stargazers: List<String>,
     val contributors: List<String>,
     val subscribers: List<String>,
     val commits: List<UserCommit>,
-    val stargazersCount: Int,
+    val starsCount: Int,
     val watchersCount: Int,
     val forksCount: Int,
-    val topics: List<String>
+    val topics: List<String>,
+    val readme: String? = null
 )
 
 @Serializable
