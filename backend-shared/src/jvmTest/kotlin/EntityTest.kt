@@ -11,7 +11,7 @@ class EntityTest {
     fun processTest() {
         val githubApiProvider = GithubApiProvider(
             httpClient = httpClient,
-            authToken = System.getenv("GITHUB_PUBLIC_TOKEN")
+            authToken = System.getenv("GITHUB_TOKEN")
         )
         val json = Json {
             prettyPrint = true
