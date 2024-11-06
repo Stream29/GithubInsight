@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight.spider
 
+import io.github.stream29.githubinsight.entities.UserInfo
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
@@ -7,11 +8,11 @@ import kotlinx.coroutines.coroutineScope
 class Spider (
     val balancingApiProvider: BalancingApiProvider
 ) {
-    suspend fun getUserInfo(login: String): User {
+    suspend fun getUserInfo(login: String): UserInfo {
         val responseCollection = balancingApiProvider.execute { a ->
             a.fetchBase(login)
         }
-        return EntityProcessor.toUser(responseCollection)
+        return EntityProcessor.toUserInfo(responseCollection)
     }
 
     // get more info: events
