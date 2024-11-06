@@ -7,3 +7,4 @@ build
 /.kotlin/
 /local.properties
 /.fleet/
+/backend-shared/src/jvmTest/resources/config.yml
