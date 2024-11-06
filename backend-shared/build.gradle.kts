@@ -23,16 +23,16 @@ kotlin {
                 implementation(libs.langchain4kt.api.google.gemini)
                 implementation(libs.langchain4kt.api.baidu.qianfan)
                 implementation(libs.ktor.client.java)
-                implementation(libs.ktor.core)
-                implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.coroutines.run.blocking.all)
-                implementation(libs.kotlinx.serialization.core)
+                api(libs.ktor.core)
+                api(libs.kotlinx.coroutines.core)
+                api(libs.coroutines.run.blocking.all)
+                api(libs.kotlinx.serialization.core)
                 implementation(libs.bson.kotlinx)
                 implementation(libs.kaml)
                 implementation(libs.ktor.client.cio)
                 implementation(libs.ktor.client.logging)
                 implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.serialization.kotlinx.json)
+                api(libs.ktor.serialization.kotlinx.json)
             }
         }
         val jvmTest by getting {
