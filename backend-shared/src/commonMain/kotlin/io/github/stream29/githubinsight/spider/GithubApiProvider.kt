@@ -49,9 +49,9 @@ suspend fun GithubApiProvider.getUser(login: String): UserInfo =
             email = email,
             organizations = listOf("todo"),
             followers = listOf("todo"),
-            followingUrl = listOf("todo"),
-            subscriptionsUrl = "todo",
-            reposUrl = reposUrl,
+            following = listOf("todo"),
+            subscriptions = listOf("todo"),
+            repos = listOf("todo"),
         )
     }
 

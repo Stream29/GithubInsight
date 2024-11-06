@@ -18,10 +18,11 @@ data class UserInfo(
     val email: String?,
     val organizations: List<String>?,
     val followers: List<String>,
-    val followingUrl: List<String>,
-//    订阅的仓库或用户
-    val subscriptionsUrl: String,
-    val reposUrl: String,
+    val following: List<String>,
+//    订阅的仓库
+    val subscriptions: List<String>,
+//    存储仓库请求路径：{login}/{repoName}
+    val repos: List<String>,
 //    val events: List<UserEvent>?
     val company: String?,
     val blog: String?,
