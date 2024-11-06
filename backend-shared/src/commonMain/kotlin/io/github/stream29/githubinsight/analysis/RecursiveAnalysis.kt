@@ -47,35 +47,38 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector<S
 }
 
 suspend fun Analyser.analyseNation(userInfo: UserInfo): Estimated<String> = coroutineScope {
-    if (userInfo.location != null) {
-        return@coroutineScope inferNationFrom(userInfo.location)
+    val info = buildString {
+        append("用户名为${userInfo.name}")
+        userInfo.bio?.let { append("，简介为$it") }
+        userInfo.location?.let { append("，位置为$it") }
     }
-    Estimated(0, "China")
+    inferNationFrom(info)//TODO: infer from connections
 }
 
-suspend fun Analyser.inferNationFrom(location: String): Estimated<String> = coroutineScope {
+suspend fun Analyser.inferNationFrom(info: String): Estimated<String> = coroutineScope {
     val respondent = chatApiProvider.asRespondent()
     val nationInferred =
         respondent.chat(
             """
             =====以下为问答示例=====
-            问：已知一个人的位置是Beijing, China，请问他在哪个国家？
-            答：中国
+            问：有这样一位用户，用户名为Tom，位置为New York，请问他最可能在哪个国家？
+            答：美国
             =====以上为问答示例=====
             你应当遵循问答示例的格式进行问答。回答的内容应当是一个国家名。不准输出其他内容。
-            已知一个人的位置是$location，请问他在哪个国家？
+            有这样一位用户，$info，请问他最可能在哪个国家？
         """.trimIndent()
         )
     val belief = respondent.chat(
         """
         =====以下为问答示例=====
-        问：从位置信息California推断所在国家为美国的置信度是多少？
+        问：从信息“用户名为Tom，位置为New York”推断所在国家为美国的置信度是多少？
         答：100
-        问：从位置信息Countryside推断所在国家为印度的置信度是多少？
-        答：0
+        问：从信息“用户名为张三”推断所在国家为中国的置信度是多少？
+        答：30
         =====以上为问答示例=====
-        你应当遵循问答示例的格式进行问答。回答的内容应当是一个0到100之间的整数，表示你对这个推断的置信度。不准输出其他内容。
-        从位置信息${location}推断所在国家为${nationInferred}的置信度是多少？
+        你应当遵循问答示例的格式进行问答。
+        回答的内容应当是一个0到100之间的整数，表示你对这个推断的置信度。不准输出其他内容。
+        从信息“${info}”推断所在国家为${nationInferred}的置信度是多少？
     """.trimIndent()
     )
     withRetry(10) {

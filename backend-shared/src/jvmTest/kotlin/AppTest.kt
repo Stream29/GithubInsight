@@ -6,8 +6,6 @@ import io.github.stream29.githubinsight.fromYamlString
 import io.github.stream29.githubinsight.toSpider
 import io.github.stream29.githubinsight.toSwitchOnFailApiProvider
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.io.File
 import kotlin.test.Test
 
@@ -23,9 +21,8 @@ class AppTest {
         val mongoDatabase = mongoClient.getDatabase("github_insight")
         val analyser = Analyser(mongoDatabase, chatApiProvider, githubApiProvider)
         runBlocking {
-            println(
-                analyser.analyseUser("ConstasJ")
-            )
+            println(analyser.analyseUser("ConstasJ"))
+            println(analyser.analyseUser("Stream29"))
         }
     }
 }
