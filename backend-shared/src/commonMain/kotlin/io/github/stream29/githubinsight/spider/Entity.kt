@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight
+package io.github.stream29.githubinsight.spider
 
 import kotlinx.serialization.Serializable
 

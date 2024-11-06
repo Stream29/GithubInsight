@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight
+package io.github.stream29.githubinsight.spider
 
 class EntityProcessor {
 
@@ -109,7 +109,7 @@ class EntityProcessor {
     }
 
     fun toOrganization(organizationResponse: OrganizationResponse,
-                              members: List<UserResponse>): Organization {
+                       members: List<UserResponse>): Organization {
         return Organization(
             organizationResponse.id,
             organizationResponse.login,

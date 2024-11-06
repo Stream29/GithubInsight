@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight.persistence
+package io.github.stream29.githubinsight
 
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import kotlinx.serialization.Serializable

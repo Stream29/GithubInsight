@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight
+package io.github.stream29.githubinsight.spider
 
 data class BalancingApiProvider(
     val apiProviders: List<GithubApiProvider>,

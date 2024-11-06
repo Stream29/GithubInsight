@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight.persistence
+package io.github.stream29.githubinsight
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
