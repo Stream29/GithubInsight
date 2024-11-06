@@ -20,16 +20,15 @@ class EntityTest {
         val responseCollection = runBlocking {
             githubApiProvider.fetchBase(System.getenv("GITHUB_ACTOR"))
         }
-        val entityProcessor = EntityProcessor()
 
         val user = runBlocking {
-            entityProcessor.toUser(responseCollection)
+            EntityProcessor.toUser(responseCollection)
         }
         println(json.encodeToString(user))
 
         if (responseCollection.orgsResponse.isNotEmpty()) {
             val org0 = runBlocking {
-                entityProcessor.toOrganization(
+                EntityProcessor.toOrganization(
                     responseCollection.orgsResponse[0],
                     githubApiProvider.fetchOrgMembers(responseCollection.orgsResponse[0].membersUrl)
                 )
@@ -39,7 +38,7 @@ class EntityTest {
 
         if (responseCollection.reposResponse.isNotEmpty()) {
             val repo0 = runBlocking {
-                entityProcessor.toRepository(
+                EntityProcessor.toRepository(
                     responseCollection.reposResponse[0],
                     githubApiProvider.fetchForks(responseCollection.reposResponse[0].forksUrl),
                     githubApiProvider.fetchContributors(responseCollection.reposResponse[0].contributorsUrl),

@@ -30,8 +30,8 @@ class GithubApiProvider(
         return responseBody
     }
 
-    suspend fun fetchBase(username: String): ResponseCollection = coroutineScope {
-        val userResponse = fetchUser(username)
+    suspend fun fetchBase(login: String): ResponseCollection = coroutineScope {
+        val userResponse = fetchUser(login)
         val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
         val reposResponse = fetchRepositories(userResponse.reposUrl)
         val followersResponse = fetchUsers(userResponse.followersUrl)
@@ -45,8 +45,8 @@ class GithubApiProvider(
         )
     }
 
-    suspend fun fetchUser(username: String): UserResponse {
-        val userJson = fetch("$baseUserUrl/$username")
+    suspend fun fetchUser(login: String): UserResponse {
+        val userJson = fetch("$baseUserUrl/$login")
         return decodeFromString<UserResponse>(userJson)
     }
 
