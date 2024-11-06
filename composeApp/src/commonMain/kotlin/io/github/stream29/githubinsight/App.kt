@@ -8,14 +8,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.stream29.githubinsight.ui.page.AllUsers
 import io.github.stream29.githubinsight.ui.page.InputPath
+import io.github.stream29.githubinsight.ui.page.UserDetail
 
 @Composable
 fun App() {
     var pageState by remember { mutableStateOf(0) }
+    var userName = remember { mutableStateOf("") }
     MaterialTheme {
         when (pageState) {
             0 -> InputPath { pageState = 1 }
-            1 -> AllUsers { pageState = 2 }
+            1 -> AllUsers (onStateChange = { pageState = 2 }, userName )
+            2 -> UserDetail({ pageState = 1 })
         }
     }
 }
