@@ -9,7 +9,6 @@ data class User(
     val avatarUrl: String,
     val followersList: List<String>,
     val followingList: List<String>,
-    val subscriptions: List<String>,
     val organizations: List<String>,
     val repos: List<String>,
     val siteAdmin: Boolean,
@@ -21,10 +20,9 @@ data class User(
     val hireable: Boolean? = null,
     val bio: String? = null,
     val twitterUsername: String? = null,
-    val publicRepos: Long,
-    val publicGists: Long,
-    val createdAt: String,
-    val updatedAt: String,
+    val publicRepos: Long? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null,
     val diskUsage: Long? = null,
     val collaborators: Long? = null
 )
@@ -34,7 +32,7 @@ data class Repository(
     val id: Long,
     val name: String,
     val fullName: String,
-    val owner: User? = null,
+    val owner: String? = null,
     val private: Boolean,
     val description: String? = null,
     val fork: Boolean,
@@ -42,7 +40,7 @@ data class Repository(
     val forksCount: Long,
     val contributors: List<String>,
     val openIssuesCount: Long,
-    val languages: List<String>,
+    val languages: Map<String, Long>,
     val stargazers: List<String>,
     val stargazersCount: Long,
     val watchersCount: Long,
@@ -56,15 +54,15 @@ data class Repository(
     val hasDiscussions: Boolean,
     val archived: Boolean,
     val disabled: Boolean,
-    val visibility: Boolean,
+    val visibility: String,
     val pushedAt: String,
     val createdAt: String,
     val updatedAt: String,
     val permissions: Permissions,
     val allowForking: Boolean,
-    val subscribersCount: Long,
-    val networkCount: Long,
-    val license: License,
+    val subscribersCount: Long? = null,
+    val networkCount: Long? = null,
+    val license: License? = null,
 )
 
 @Serializable
@@ -83,12 +81,12 @@ data class Release(
     val prerelease: Boolean,
     val createdAt: String,
     val publishedAt: String,
-    val assets: Assets,
+    val assets: List<Asset>,
     val body: String
 )
 
 @Serializable
-data class Assets(
+data class Asset(
     val id: Long,
     val uploader: String,
     val state: String,
@@ -101,9 +99,9 @@ data class Assets(
 @Serializable
 data class Commit(
     val sha: String,
-    val message: String,
-    val author: String,
-    val committer: String,
+    val message: String? = null,
+    val author: String? = null,
+    val committer: String? = null,
 )
 
 @Serializable
@@ -118,4 +116,11 @@ data class IssueEvent(
     val id: Long,
     val actor: String,
     val event: String,
+)
+
+@Serializable
+data class Organization(
+    val id: Long,
+    val login: String,
+    val followers: List<String>,
 )

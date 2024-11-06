@@ -41,34 +41,25 @@ actual class GithubApiProvider actual constructor(
         val userResponse = fetchUser(username)
         val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
         val reposResponse = fetchRepositories(userResponse.reposUrl)
-//            .asSequence()
-//            .sortedBy { it.stargazersCount }
-//            .take(limitedReposCount)
-//            .toList()
-//            .map { repo ->
-//                async {
-//                    repo.apply {
-//                        val release = async { fetchReleases(repo.releasesUrl) }
-//                        val commit = async { fetchCommits(repo.commitsUrl) }
-//                        val issues = async { fetchIssues(repo.issuesUrl) }
-//                        val issueEvents = async { fetchIssueEvents(repo.issueEventsUrl) }
-//                        releasesResponse = release.await()
-//                        commitsResponse = commit.await()
-//                        issuesResponse = issues.await()
-//                        issueEventsResponse = issueEvents.await()
-//                    }
-//                }
-//            }.awaitAll()
+        val followersResponse = fetchUsers(userResponse.followersUrl)
+        val followingResponse = fetchUsers(userResponse.followingUrl)
         ResponseCollection(
             userResponse,
             organizationsResponse,
             reposResponse,
+            followersResponse,
+            followingResponse,
         )
     }
 
     actual suspend fun fetchUser(username: String): UserResponse {
         val userJson = fetch("$baseUserUrl/$username")
         return decodeFromString<UserResponse>(userJson)
+    }
+
+    actual suspend fun fetchUsers(usersUrl: String): List<UserResponse> {
+        val usersJson = fetch(usersUrl.replace("{/other_user}", ""))
+        return decodeFromString<List<UserResponse>>(usersJson)
     }
 
     actual suspend fun fetchEvents(eventsUrl: String): List<EventResponse> {
@@ -112,6 +103,29 @@ actual class GithubApiProvider actual constructor(
     actual suspend fun fetchIssueEvents(issueEventsUrl: String): List<IssueEventResponse> {
         val issueEventsJson = fetch(issueEventsUrl.replace("{/number}", ""))
         return decodeFromString<List<IssueEventResponse>>(issueEventsJson)
+    }
+
+    actual suspend fun fetchForks(forksUrl: String): List<RepositoryResponse> {
+        val forksJson = fetch(forksUrl)
+        return decodeFromString<List<RepositoryResponse>>(forksJson)
+    }
+
+    actual suspend fun fetchContributors(contributorsUrl: String): List<UserResponse> {
+        val contributorsJson = fetch(contributorsUrl)
+        if (contributorsJson.trim().isBlank()) {
+            return decodeFromString<List<UserResponse>>("[]")
+        }
+        return decodeFromString<List<UserResponse>>(contributorsJson)
+    }
+
+    actual suspend fun fetchStargazers(stargazersUrl: String): List<UserResponse> {
+        val stargazersJson = fetch(stargazersUrl)
+        return decodeFromString<List<UserResponse>>(stargazersJson)
+    }
+
+    actual suspend fun fetchLanguages(languagesUrl: String): Map<String, Long> {
+        val languagesJson = fetch(languagesUrl)
+        return decodeFromString<Map<String, Long>>(languagesJson)
     }
 
 }

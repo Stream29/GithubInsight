@@ -8,6 +8,8 @@ data class ResponseCollection(
     val userResponse: UserResponse,
     val orgsResponse: List<OrganizationResponse>,
     val reposResponse: List<RepositoryResponse>,
+    val followersResponse: List<UserResponse>,
+    val followingResponse: List<UserResponse>,
 )
 
 @Serializable
@@ -29,8 +31,6 @@ data class UserResponse(
     val followingUrl: String,
     @SerialName("starred_url")
     val starredUrl: String,
-    @SerialName("subscriptions_url")
-    val subscriptionsUrl: String,
     @SerialName("organizations_url")
     val organizationsUrl: String,
     @SerialName("repos_url")
@@ -51,8 +51,6 @@ data class UserResponse(
     val twitterUsername: String? = null,
     @SerialName("public_repos")
     val publicRepos: Long? = null,
-    @SerialName("public_gists")
-    val publicGists: Long? = null,
     @SerialName("created_at")
     val createdAt: String? = null,
     @SerialName("updated_at")
@@ -164,12 +162,12 @@ data class ReleaseResponse(
     val createdAt: String,
     @SerialName("published_at")
     val publishedAt: String,
-    val assets: List<AssetsResponse>,
+    val assets: List<AssetResponse>,
     val body: String
 )
 
 @Serializable
-data class AssetsResponse(
+data class AssetResponse(
     val id: Long,
     val uploader: UserResponse,
     val state: String,
