@@ -54,7 +54,7 @@ data class BaiduQianfanAuthConfig(
     val model: String
 ) : ChatApiConfig {
     override fun getApiProvider() =
-        QianfanApiProvider(httpClient, apiKey, secretKey, model)
+        QianfanApiProvider(httpClient, model, apiKey, secretKey)
 }
 
 @Serializable
@@ -65,7 +65,7 @@ data class GoogleGeminiConfig(
     val model: String
 ) : ChatApiConfig {
     override fun getApiProvider() =
-        GeminiApiProvider(httpClient, GeminiGenerationConfig(), apiKey, model)
+        GeminiApiProvider(httpClient, GeminiGenerationConfig(), model, apiKey)
 }
 
 fun List<ChatApiConfig>.toSwitchOnFailApiProvider() =

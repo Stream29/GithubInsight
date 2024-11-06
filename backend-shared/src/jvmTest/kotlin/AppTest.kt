@@ -24,13 +24,7 @@ class AppTest {
         val analyser = Analyser(mongoDatabase, chatApiProvider, githubApiProvider)
         runBlocking {
             println(
-                Json.encodeToString(
-                    listOf(
-                        analyser.analyseUser("Stream29"),
-                        analyser.analyseUser("yumeowo"),
-                        analyser.analyseUser("Moistrocic")
-                    )
-                )
+                analyser.analyseUser("ConstasJ")
             )
         }
     }
