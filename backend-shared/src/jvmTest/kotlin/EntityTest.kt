@@ -1,6 +1,4 @@
-import io.github.stream29.githubinsight.spider.EntityProcessor
-import io.github.stream29.githubinsight.spider.GithubApiProvider
-import io.github.stream29.githubinsight.spider.Organization
+import io.github.stream29.githubinsight.spider.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

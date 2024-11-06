@@ -1,5 +1,6 @@
 import io.github.stream29.githubinsight.spider.BalancingApiProvider
 import io.github.stream29.githubinsight.spider.GithubApiProvider
+import io.github.stream29.githubinsight.spider.fetchBase
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
