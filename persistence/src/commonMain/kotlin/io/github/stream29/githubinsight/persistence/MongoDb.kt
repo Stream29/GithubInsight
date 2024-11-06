@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 val client = MongoClient.create()
 val database = client.getDatabase("github-insight")
 
+fun PersistenceConfig.getClient() = MongoClient.create(connectionString)
+
+
 @Serializable
 data class User(
     val name: String,
