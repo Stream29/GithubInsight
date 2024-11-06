@@ -7,11 +7,11 @@ expect class GithubApiProvider(
     authToken: String
 ) {
     suspend fun fetch(url: String): String
-    suspend fun fetchAll(username: String): ResponseCollection
+    suspend fun fetchBase(username: String): ResponseCollection
     suspend fun fetchUser(username: String): UserResponse
-    suspend fun fetchEvents(eventsUrl: String): String
+    suspend fun fetchEvents(eventsUrl: String): List<EventResponse>
     suspend fun fetchOrganizations(orgsUrl: String): List<OrganizationResponse>
-    suspend fun fetchOrganization(orgUrl: String): OrganizationResponse
+    suspend fun fetchOrgMembers(membersUrl: String): List<UserResponse>
     suspend fun fetchRepositories(reposUrl: String): List<RepositoryResponse>
     suspend fun fetchReleases(releaseUrl: String): List<ReleaseResponse>
     suspend fun fetchCommits(commitsUrl: String): List<CommitResponse>

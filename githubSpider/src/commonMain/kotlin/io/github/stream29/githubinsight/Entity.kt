@@ -7,11 +7,11 @@ data class User(
     val id: Long,
     val login: String,
     val avatarUrl: String,
-    val followersList: List<User>,
-    val followingList: List<User>,
-    val subscriptions: List<Repository>,
-    val organizations: List<Organization>,
-    val repos: List<Repository>,
+    val followersList: List<String>,
+    val followingList: List<String>,
+    val subscriptions: List<String>,
+    val organizations: List<String>,
+    val repos: List<String>,
     val siteAdmin: Boolean,
     val name: String? = null,
     val company: String? = null,
@@ -38,16 +38,12 @@ data class Repository(
     val private: Boolean,
     val description: String? = null,
     val fork: Boolean,
-    val forks: List<Repository>,
+    val forks: List<String>,
     val forksCount: Long,
-    val contributors: List<User>,
-    val commits: List<Commit>,
-    val issues: List<Issue>,
-    val issueEvents: List<IssueEvent>,
+    val contributors: List<String>,
     val openIssuesCount: Long,
     val languages: List<String>,
-    val releases: List<Release>,
-    val stargazers: List<User>,
+    val stargazers: List<String>,
     val stargazersCount: Long,
     val watchersCount: Long,
     val size: Long,
@@ -72,9 +68,17 @@ data class Repository(
 )
 
 @Serializable
+data class Event(
+    val id: Long,
+    val type: String,
+    val actor: String,
+    val repo: String,
+)
+
+@Serializable
 data class Release(
-    val nodeId: String,
-    val author: User,
+    val id: Long,
+    val author: String,
     val name: String,
     val prerelease: Boolean,
     val createdAt: String,
@@ -85,8 +89,8 @@ data class Release(
 
 @Serializable
 data class Assets(
-    val nodeId: String,
-    val uploader: User,
+    val id: Long,
+    val uploader: String,
     val state: String,
     val size: Long,
     val downloadCount: Long,
@@ -98,32 +102,20 @@ data class Assets(
 data class Commit(
     val sha: String,
     val message: String,
-    val author: User,
-    val committer: User,
+    val author: String,
+    val committer: String,
 )
 
 @Serializable
 data class Issue(
-    val nodeId: String,
+    val id: Long,
     val title: String,
-    val user: User,
+    val user: String,
 )
 
 @Serializable
 data class IssueEvent(
-    val nodeId: String,
-    val actor: User,
+    val id: Long,
+    val actor: String,
     val event: String,
-)
-
-@Serializable
-data class Organization(
-    val login: String,
-    val nodeId: String,
-    val avatarUrl: String,
-    val description: String,
-    val email: String,
-    val isVerified: Boolean,
-    val publicRepos: Long,
-    val followers: Long,
 )

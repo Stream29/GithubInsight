@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResponseCollection(
     val userResponse: UserResponse,
-    val reposResponse: List<RepositoryResponse>,
     val orgsResponse: List<OrganizationResponse>,
+    val reposResponse: List<RepositoryResponse>,
 )
 
 @Serializable
@@ -134,10 +134,6 @@ data class RepositoryResponse(
     @SerialName("network_count")
     val networkCount: Long? = null,
     val license: License? = null,
-    var releasesResponse: List<ReleaseResponse>? = null,
-    var commitsResponse: List<CommitResponse>? = null,
-    var issuesResponse: List<IssueResponse>? = null,
-    var issueEventsResponse: List<IssueEventResponse>? = null,
 )
 
 @Serializable
@@ -160,8 +156,7 @@ data class License(
 
 @Serializable
 data class ReleaseResponse(
-    @SerialName("node_id")
-    val nodeId: String,
+    val id: Long,
     val author: UserResponse,
     val name: String,
     val prerelease: Boolean,
@@ -175,8 +170,7 @@ data class ReleaseResponse(
 
 @Serializable
 data class AssetsResponse(
-    @SerialName("node_id")
-    val nodeId: String,
+    val id: Long,
     val uploader: UserResponse,
     val state: String,
     val size: Long,
@@ -198,33 +192,47 @@ data class CommitResponse(
 
 @Serializable
 data class IssueResponse(
-    @SerialName("node_id")
-    val nodeId: String,
+    val id: Long,
     val title: String,
     val user: UserResponse,
 )
 
 @Serializable
 data class IssueEventResponse(
-    @SerialName("node_id")
-    val nodeId: String,
+    val id: Long,
     val actor: UserResponse,
     val event: String,
 )
 
 @Serializable
 data class OrganizationResponse(
+    val id: Long,
     val login: String,
-    @SerialName("node_id")
-    val nodeId: String,
-    val url: String,
-    @SerialName("avatar_url")
-    val avatarUrl: String,
-    val description: String,
-    val email: String? = null,
-    @SerialName("is_verified")
-    val isVerified: Boolean? = null,
-    @SerialName("public_repos")
-    val publicRepos: Long? = null,
-    val followers: Long? = null,
+    @SerialName("members_url")
+    val membersUrl: String,
+)
+
+@Serializable
+data class EventResponse(
+    val id: Long,
+    val type: String,
+    val actor: UserResponse,
+    val repo: RepositoryResponse,
+    val payload: Payload,
+    val public: Boolean,
+    @SerialName("created_at")
+    val createdAt: String,
+)
+
+@Serializable
+data class Payload(
+    @SerialName("repository_id")
+    val repositoryId: String,
+    @SerialName("push_id")
+    val pushId: String,
+    val size: Long,
+    val ref: String,
+    val head: String,
+    val before: String,
+    val commits: List<CommitResponse>? = null,
 )

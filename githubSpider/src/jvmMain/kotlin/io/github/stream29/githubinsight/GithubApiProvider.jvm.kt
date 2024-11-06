@@ -37,39 +37,32 @@ actual class GithubApiProvider actual constructor(
         return responseBody
     }
 
-    actual suspend fun fetchAll(username: String): ResponseCollection = coroutineScope {
+    actual suspend fun fetchBase(username: String): ResponseCollection = coroutineScope {
         val userResponse = fetchUser(username)
         val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
-            .asFlow()
-            .map {
-                async {
-                    fetchOrganization(it.url)
-                }
-            }.buffer()
-            .toList().awaitAll()
         val reposResponse = fetchRepositories(userResponse.reposUrl)
-            .asSequence()
-            .sortedBy { it.stargazersCount }
-            .take(limitedReposCount)
-            .toList()
-            .map { repo ->
-                async {
-                    repo.apply {
-                        val release = async { fetchReleases(repo.releasesUrl) }
-                        val commit = async { fetchCommits(repo.commitsUrl) }
-                        val issues = async { fetchIssues(repo.issuesUrl) }
-                        val issueEvents = async { fetchIssueEvents(repo.issueEventsUrl) }
-                        releasesResponse = release.await()
-                        commitsResponse = commit.await()
-                        issuesResponse = issues.await()
-                        issueEventsResponse = issueEvents.await()
-                    }
-                }
-            }.awaitAll()
+//            .asSequence()
+//            .sortedBy { it.stargazersCount }
+//            .take(limitedReposCount)
+//            .toList()
+//            .map { repo ->
+//                async {
+//                    repo.apply {
+//                        val release = async { fetchReleases(repo.releasesUrl) }
+//                        val commit = async { fetchCommits(repo.commitsUrl) }
+//                        val issues = async { fetchIssues(repo.issuesUrl) }
+//                        val issueEvents = async { fetchIssueEvents(repo.issueEventsUrl) }
+//                        releasesResponse = release.await()
+//                        commitsResponse = commit.await()
+//                        issuesResponse = issues.await()
+//                        issueEventsResponse = issueEvents.await()
+//                    }
+//                }
+//            }.awaitAll()
         ResponseCollection(
             userResponse,
-            reposResponse,
             organizationsResponse,
+            reposResponse,
         )
     }
 
@@ -78,14 +71,19 @@ actual class GithubApiProvider actual constructor(
         return decodeFromString<UserResponse>(userJson)
     }
 
+    actual suspend fun fetchEvents(eventsUrl: String): List<EventResponse> {
+        val eventsJson = fetch(eventsUrl.replace("{/privacy}", ""))
+        return decodeFromString<List<EventResponse>>(eventsJson)
+    }
+
     actual suspend fun fetchOrganizations(orgsUrl: String): List<OrganizationResponse> {
         val orgsJson = fetch(orgsUrl)
         return decodeFromString<List<OrganizationResponse>>(orgsJson)
     }
 
-    actual suspend fun fetchOrganization(orgUrl: String): OrganizationResponse {
-        val orgJson = fetch(orgUrl)
-        return decodeFromString<OrganizationResponse>(orgJson)
+    actual suspend fun fetchOrgMembers(membersUrl: String): List<UserResponse> {
+        val membersJson = fetch(membersUrl.replace("{/member}", ""))
+        return decodeFromString<List<UserResponse>>(membersJson)
     }
 
     actual suspend fun fetchRepositories(reposUrl: String): List<RepositoryResponse> {
