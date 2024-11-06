@@ -1,0 +1,6 @@
+ktor:
+  application:
+    modules:
+      - io.github.stream29.githubinsight.server.ApplicationKt.module
+  deployment:
+    port: 8081
