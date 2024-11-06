@@ -54,9 +54,9 @@ data class UserResponse(
     @SerialName("twitter_username")
     val twitterUsername: String? = null,
     @SerialName("public_repos")
-    val publicRepos: Int? = null,
+    val publicRepos: Long? = null,
     @SerialName("public_gists")
-    val publicGists: Int? = null,
+    val publicGists: Long? = null,
     @SerialName("created_at")
     val createdAt: String? = null,
     @SerialName("updated_at")

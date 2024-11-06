@@ -19,8 +19,8 @@ class EntityProcessor {
                 responseCollection.userResponse.company,
                 responseCollection.userResponse.blog,
                 responseCollection.userResponse.location,
-                responseCollection.userResponse.publicRepos?:0,
-                responseCollection.userResponse.publicGists?:0,
+                responseCollection.userResponse.publicRepos?.toInt() ?: 0,
+                responseCollection.userResponse.publicGists?.toInt() ?: 0,
                 responseCollection.followersResponse.size,
                 responseCollection.followingResponse.size
             )
