@@ -38,3 +38,4 @@ dependencyResolutionManagement {
 include(":composeApp")
 include(":githubSpider")
 include(":recursiveAnalysis")
+include("persistence")
