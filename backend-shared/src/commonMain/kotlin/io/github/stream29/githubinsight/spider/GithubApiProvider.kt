@@ -5,6 +5,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.Json
 
@@ -57,18 +58,22 @@ suspend fun GithubApiProvider.getUser(login: String): UserInfo =
 
 suspend fun GithubApiProvider.fetchBase(login: String): ResponseCollection = coroutineScope {
     val userResponse = fetchUser(login)
-    val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
-    val reposResponse = fetchRepositories(userResponse.reposUrl)
-    val subscriptionsResponse = fetchSubscriptions(userResponse.subscriptionsUrl)
-    val followersResponse = fetchUsers(userResponse.followersUrl)
-    val followingResponse = fetchUsers(userResponse.followingUrl)
+
+    val organizationsResponse = async { fetchOrganizations(userResponse.organizationsUrl) }
+    val reposResponse = async { fetchRepositories(userResponse.reposUrl) }
+    val subscriptionsResponse = async { fetchSubscriptions(userResponse.subscriptionsUrl) }
+    val starredResponse = async { fetchStarred(userResponse.starredUrl) }
+    val followersResponse = async { fetchUsers(userResponse.followersUrl) }
+    val followingResponse = async { fetchUsers(userResponse.followingUrl) }
+
     ResponseCollection(
         userResponse,
-        organizationsResponse,
-        reposResponse,
-        subscriptionsResponse,
-        followersResponse,
-        followingResponse,
+        organizationsResponse.await(),
+        reposResponse.await(),
+        subscriptionsResponse.await(),
+        starredResponse.await(),
+        followersResponse.await(),
+        followingResponse.await(),
     )
 }
 
@@ -102,9 +107,21 @@ suspend fun GithubApiProvider.fetchRepositories(reposUrl: String): List<Reposito
     return decodeFromString<List<RepositoryResponse>>(reposJson)
 }
 
+suspend fun GithubApiProvider.fetchRepository(repoUrl: String): RepositoryResponse {
+    val repoJson = fetch(repoUrl)
+    return decodeFromString<RepositoryResponse>(repoJson)
+}
+
 suspend fun GithubApiProvider.fetchSubscriptions(subsUrl: String): List<RepositoryResponse> {
     val subscriptionsJson = fetch(subsUrl)
     return decodeFromString<List<RepositoryResponse>>(subscriptionsJson)
+}
+
+suspend fun GithubApiProvider.fetchStarred(starredUrl: String): List<RepositoryResponse> {
+    val starredJson = fetch(starredUrl
+        .replace("{/owner}", "")
+        .replace("{/repo}", ""))
+    return decodeFromString<List<RepositoryResponse>>(starredJson)
 }
 
 suspend fun GithubApiProvider.fetchReleases(releaseUrl: String): List<ReleaseResponse> {
@@ -155,5 +172,6 @@ suspend fun GithubApiProvider.fetchLanguages(languagesUrl: String): Map<String, 
 
 const val baseUrl = "https://api.github.com"
 const val baseUserUrl = "$baseUrl/users"
+const val baseRepoUrl = "$baseUrl/repos"
 const val orgUrl = "$baseUrl/orgs"
 const val limitedReposCount = 20

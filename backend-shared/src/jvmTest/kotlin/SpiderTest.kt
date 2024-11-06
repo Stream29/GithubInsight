@@ -1,7 +1,4 @@
-import io.github.stream29.githubinsight.spider.BalancingApiProvider
-import io.github.stream29.githubinsight.spider.GithubApiProvider
-import io.github.stream29.githubinsight.spider.Spider
-import io.github.stream29.githubinsight.spider.User
+import io.github.stream29.githubinsight.spider.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Test
@@ -26,8 +23,12 @@ class SpiderTest {
 
         val login = System.getenv("GITHUB_ACTOR")
 
+//        runBlocking {
+//            println(json.encodeToString(User.serializer(), spider.getUserInfo(login)))
+//        }
+
         runBlocking {
-            println(json.encodeToString(User.serializer(), spider.getBaseUserInformation(login)))
+            println(json.encodeToString(Repository.serializer(), spider.getRepository("Moistrocic/langchain4kt")))
         }
     }
 }

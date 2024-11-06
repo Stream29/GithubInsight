@@ -11,6 +11,8 @@ class EntityProcessor {
                 toUsersName(responseCollection.followingResponse),
                 toRepositoriesFullName(responseCollection.subscriptionsResponse),
                 responseCollection.userResponse.subscriptionsUrl,
+                toRepositoriesFullName(responseCollection.starredresponse),
+                responseCollection.userResponse.starredUrl,
                 toOrganizationsName(responseCollection.orgsResponse),
                 responseCollection.userResponse.organizationsUrl,
                 toRepositoriesFullName(responseCollection.reposResponse),

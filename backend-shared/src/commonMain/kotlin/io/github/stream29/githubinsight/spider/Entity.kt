@@ -11,6 +11,8 @@ data class User(
     val followingList: List<String>,
     val subscriptions: List<String>,
     val subscriptionsUrl: String,
+    val starred: List<String>,
+    val starredUrl: String,
     val organizations: List<String>,
     val organizationsUrl: String,
     val repos: List<String>,
