@@ -59,12 +59,14 @@ suspend fun GithubApiProvider.fetchBase(login: String): ResponseCollection = cor
     val userResponse = fetchUser(login)
     val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
     val reposResponse = fetchRepositories(userResponse.reposUrl)
+    val subscriptionsResponse = fetchSubscriptions(userResponse.subscriptionsUrl)
     val followersResponse = fetchUsers(userResponse.followersUrl)
     val followingResponse = fetchUsers(userResponse.followingUrl)
     ResponseCollection(
         userResponse,
         organizationsResponse,
         reposResponse,
+        subscriptionsResponse,
         followersResponse,
         followingResponse,
     )
@@ -98,6 +100,11 @@ suspend fun GithubApiProvider.fetchOrgMembers(membersUrl: String): List<UserResp
 suspend fun GithubApiProvider.fetchRepositories(reposUrl: String): List<RepositoryResponse> {
     val reposJson = fetch(reposUrl)
     return decodeFromString<List<RepositoryResponse>>(reposJson)
+}
+
+suspend fun GithubApiProvider.fetchSubscriptions(subsUrl: String): List<RepositoryResponse> {
+    val subscriptionsJson = fetch(subsUrl)
+    return decodeFromString<List<RepositoryResponse>>(subscriptionsJson)
 }
 
 suspend fun GithubApiProvider.fetchReleases(releaseUrl: String): List<ReleaseResponse> {
