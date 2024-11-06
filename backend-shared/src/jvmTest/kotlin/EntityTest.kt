@@ -19,11 +19,6 @@ class EntityTest {
             githubApiProvider.fetchBase(System.getenv("GITHUB_ACTOR"))
         }
 
-        val user = runBlocking {
-            EntityProcessor.toUser(responseCollection)
-        }
-        println(json.encodeToString(user))
-
         if (responseCollection.orgsResponse.isNotEmpty()) {
             val org0 = runBlocking {
                 EntityProcessor.toOrganization(

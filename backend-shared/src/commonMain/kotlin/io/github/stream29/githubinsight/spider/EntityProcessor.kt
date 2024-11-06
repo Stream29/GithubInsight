@@ -1,30 +1,28 @@
 package io.github.stream29.githubinsight.spider
 
+import io.github.stream29.githubinsight.entities.UserInfo
+
 class EntityProcessor {
     companion object {
-        fun toUser(responseCollection: ResponseCollection): User {
-            return User(
-                responseCollection.userResponse.id,
+        fun toUserInfo(responseCollection: ResponseCollection): UserInfo {
+            return UserInfo(
                 responseCollection.userResponse.login,
+                responseCollection.userResponse.name?:"",
                 responseCollection.userResponse.avatarUrl,
+                responseCollection.userResponse.bio,
+                responseCollection.userResponse.email,
+                toOrganizationsName(responseCollection.orgsResponse),
                 toUsersName(responseCollection.followersResponse),
                 toUsersName(responseCollection.followingResponse),
-                toOrganizationsName(responseCollection.orgsResponse),
+                toRepositoriesFullName(responseCollection.subscriptionsResponse),
                 toRepositoriesFullName(responseCollection.reposResponse),
-                responseCollection.userResponse.siteAdmin,
-                responseCollection.userResponse.name,
                 responseCollection.userResponse.company,
                 responseCollection.userResponse.blog,
                 responseCollection.userResponse.location,
-                responseCollection.userResponse.email,
-                responseCollection.userResponse.hireable,
-                responseCollection.userResponse.bio,
-                responseCollection.userResponse.twitterUsername,
-                responseCollection.userResponse.publicRepos,
-                responseCollection.userResponse.createdAt,
-                responseCollection.userResponse.updatedAt,
-                responseCollection.userResponse.diskUsage,
-                responseCollection.userResponse.collaborators,
+                responseCollection.userResponse.publicRepos?.toInt() ?: 0,
+                responseCollection.userResponse.publicGists?.toInt() ?: 0,
+                responseCollection.followersResponse.size,
+                responseCollection.followingResponse.size
             )
         }
 
