@@ -1,19 +1,14 @@
 package io.github.stream29.githubinsight
 
+import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 actual class GithubApiProvider actual constructor(
+    private val httpClient: HttpClient,
     val authToken: String
 ) {
     private val json = Json {
@@ -35,39 +30,18 @@ actual class GithubApiProvider actual constructor(
         return responseBody
     }
 
-    actual suspend fun fetchAll(username: String): ResponseCollection = coroutineScope {
+    actual suspend fun fetchBase(username: String): ResponseCollection = coroutineScope {
         val userResponse = fetchUser(username)
         val organizationsResponse = fetchOrganizations(userResponse.organizationsUrl)
-            .asFlow()
-            .map {
-                async {
-                    fetchOrganization(it.url)
-                }
-            }.buffer()
-            .toList().awaitAll()
         val reposResponse = fetchRepositories(userResponse.reposUrl)
-            .asSequence()
-            .sortedBy { it.stargazersCount }
-            .take(limitedReposCount)
-            .toList()
-            .map { repo ->
-                async {
-                    repo.apply {
-                        val release = async { fetchReleases(repo.releasesUrl) }
-                        val commit = async { fetchCommits(repo.commitsUrl) }
-                        val issues = async { fetchIssues(repo.issuesUrl) }
-                        val issueEvents = async { fetchIssueEvents(repo.issueEventsUrl) }
-                        releasesResponse = release.await()
-                        commitsResponse = commit.await()
-                        issuesResponse = issues.await()
-                        issueEventsResponse = issueEvents.await()
-                    }
-                }
-            }.awaitAll()
+        val followersResponse = fetchUsers(userResponse.followersUrl)
+        val followingResponse = fetchUsers(userResponse.followingUrl)
         ResponseCollection(
             userResponse,
-            reposResponse,
             organizationsResponse,
+            reposResponse,
+            followersResponse,
+            followingResponse,
         )
     }
 
@@ -76,14 +50,24 @@ actual class GithubApiProvider actual constructor(
         return decodeFromString<UserResponse>(userJson)
     }
 
+    actual suspend fun fetchUsers(usersUrl: String): List<UserResponse> {
+        val usersJson = fetch(usersUrl.replace("{/other_user}", ""))
+        return decodeFromString<List<UserResponse>>(usersJson)
+    }
+
+    actual suspend fun fetchEvents(eventsUrl: String): List<EventResponse> {
+        val eventsJson = fetch(eventsUrl.replace("{/privacy}", ""))
+        return decodeFromString<List<EventResponse>>(eventsJson)
+    }
+
     actual suspend fun fetchOrganizations(orgsUrl: String): List<OrganizationResponse> {
         val orgsJson = fetch(orgsUrl)
         return decodeFromString<List<OrganizationResponse>>(orgsJson)
     }
 
-    actual suspend fun fetchOrganization(orgUrl: String): OrganizationResponse {
-        val orgJson = fetch(orgUrl)
-        return decodeFromString<OrganizationResponse>(orgJson)
+    actual suspend fun fetchOrgMembers(membersUrl: String): List<UserResponse> {
+        val membersJson = fetch(membersUrl.replace("{/member}", ""))
+        return decodeFromString<List<UserResponse>>(membersJson)
     }
 
     actual suspend fun fetchRepositories(reposUrl: String): List<RepositoryResponse> {
@@ -112,6 +96,29 @@ actual class GithubApiProvider actual constructor(
     actual suspend fun fetchIssueEvents(issueEventsUrl: String): List<IssueEventResponse> {
         val issueEventsJson = fetch(issueEventsUrl.replace("{/number}", ""))
         return decodeFromString<List<IssueEventResponse>>(issueEventsJson)
+    }
+
+    actual suspend fun fetchForks(forksUrl: String): List<RepositoryResponse> {
+        val forksJson = fetch(forksUrl)
+        return decodeFromString<List<RepositoryResponse>>(forksJson)
+    }
+
+    actual suspend fun fetchContributors(contributorsUrl: String): List<UserResponse> {
+        val contributorsJson = fetch(contributorsUrl)
+        if (contributorsJson.trim().isBlank()) {
+            return decodeFromString<List<UserResponse>>("[]")
+        }
+        return decodeFromString<List<UserResponse>>(contributorsJson)
+    }
+
+    actual suspend fun fetchStargazers(stargazersUrl: String): List<UserResponse> {
+        val stargazersJson = fetch(stargazersUrl)
+        return decodeFromString<List<UserResponse>>(stargazersJson)
+    }
+
+    actual suspend fun fetchLanguages(languagesUrl: String): Map<String, Long> {
+        val languagesJson = fetch(languagesUrl)
+        return decodeFromString<Map<String, Long>>(languagesJson)
     }
 
 }
