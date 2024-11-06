@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight.spider
 
+import io.github.stream29.githubinsight.entities.Repository
 import io.github.stream29.githubinsight.entities.UserInfo
 
 class EntityProcessor {
@@ -19,10 +20,6 @@ class EntityProcessor {
                 responseCollection.userResponse.company,
                 responseCollection.userResponse.blog,
                 responseCollection.userResponse.location,
-                responseCollection.userResponse.publicRepos?.toInt() ?: 0,
-                responseCollection.userResponse.publicGists?.toInt() ?: 0,
-                responseCollection.followersResponse.size,
-                responseCollection.followingResponse.size
             )
         }
 
@@ -62,40 +59,19 @@ class EntityProcessor {
             languages: Map<String, Long>
         ): Repository {
             return Repository(
-                repositoryResponse.id,
-                repositoryResponse.name,
-                repositoryResponse.fullName,
-                repositoryResponse.owner?.login,
-                repositoryResponse.private,
-                repositoryResponse.description,
-                repositoryResponse.fork,
-                toRepositoriesFullName(forks),
-                repositoryResponse.forksCount,
-                toUsersName(contributors),
-                repositoryResponse.openIssuesCount,
-                languages,
-                toUsersName(stargazers),
-                repositoryResponse.stargazersCount,
-                repositoryResponse.watchersCount,
-                repositoryResponse.size,
-                repositoryResponse.topics,
-                repositoryResponse.hasIssues,
-                repositoryResponse.hasProjects,
-                repositoryResponse.hasWiki,
-                repositoryResponse.hasPages,
-                repositoryResponse.hasDownloads,
-                repositoryResponse.hasDiscussions,
-                repositoryResponse.archived,
-                repositoryResponse.disabled,
-                repositoryResponse.visibility,
-                repositoryResponse.pushedAt,
-                repositoryResponse.createdAt,
-                repositoryResponse.updatedAt,
-                repositoryResponse.permissions,
-                repositoryResponse.allowForking,
-                repositoryResponse.subscribersCount,
-                repositoryResponse.networkCount,
-                repositoryResponse.license,
+                name = TODO(),
+                description = TODO(),
+                collaborators = TODO(),
+                tags = TODO(),
+                languages = TODO(),
+                contributors = TODO(),
+                subscribers = TODO(),
+                commits = TODO(),
+                starsCount = TODO(),
+                watchersCount = TODO(),
+                forksCount = TODO(),
+                topics = TODO(),
+                readme = TODO()
             )
         }
 

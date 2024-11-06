@@ -29,13 +29,20 @@ data class UserInfo(
 )
 
 @Serializable
+data class RepoResult(
+    val name: String,
+    val techValue: Map<String, String>,
+    val contributeMap: Map<String, Int>
+)
+
+@Serializable
 data class Repository(
     val name: String,
     val description: String? = null,
     val collaborators: List<String>,
     val tags: List<String>,
 //    使用的编程语言以及使用次数
-    val languages: Map<String,Int>,
+    val languages: Map<String, Int>,
     val contributors: List<String>,
     val subscribers: List<String>,
     val commits: List<UserCommit>,

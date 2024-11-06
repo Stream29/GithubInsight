@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight.spider
 
+import io.github.stream29.githubinsight.entities.Repository
 import io.github.stream29.githubinsight.entities.UserInfo
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
