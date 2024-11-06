@@ -2,13 +2,16 @@ package io.github.stream29.githubinsight.spider
 
 import io.github.stream29.githubinsight.entities.UserInfo
 import io.github.stream29.githubinsight.httpClient
+import io.github.stream29.githubinsight.fromYamlString
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
+import java.io.File
 
 class GithubApiProvider(
     val authToken: String
@@ -17,6 +20,13 @@ class GithubApiProvider(
         prettyPrint = true
         ignoreUnknownKeys = true
     }
+    private val backendConfig = File("src/jvmTest/resources/config.yml")
+        .readText()
+        .let { BackendConfig.fromYamlString(it) }
+    private val mongoClient = backendConfig.mongodb.connectionString.let { MongoClient.create(it) }
+    private val mongoDatabase = mongoClient.getDatabase("github-insight")
+    val userResponseCollection = mongoDatabase.getCollection<UserResponse>("api-user")
+    val jsonCollection = mongoDatabase.getCollection<JsonCollection>("api-json")
 
     internal inline fun <reified T> decodeFromString(responseBody: String): T {
         return json.decodeFromString<T>(responseBody)
@@ -78,96 +88,142 @@ suspend fun GithubApiProvider.fetchBase(login: String): ResponseCollection = cor
 }
 
 suspend fun GithubApiProvider.fetchUser(login: String): UserResponse {
+    userResponseCollection.find(eq("login", login))
+        .firstOrNull()
+        ?.let { return it }
     val userJson = fetch("$baseUserUrl/$login")
-    return decodeFromString<UserResponse>(userJson)
+    val user = decodeFromString<UserResponse>(userJson)
+    userResponseCollection.insertOne(user)
+    return user
+}
+
+suspend fun GithubApiProvider.persistence(jsonUrl: String, blocks: suspend () -> String): String {
+    jsonCollection.find(eq("jsonUrl", jsonUrl))
+        .firstOrNull()
+        ?.let { return it.json }
+    val jsonResult = blocks.invoke()
+    jsonCollection.insertOne(JsonCollection(jsonUrl, jsonResult))
+    return jsonResult
 }
 
 suspend fun GithubApiProvider.fetchUsers(usersUrl: String): List<UserResponse> {
-    val usersJson = fetch(usersUrl.replace("{/other_user}", ""))
-    return decodeFromString<List<UserResponse>>(usersJson)
+    val json = persistence(usersUrl) {
+        fetch(usersUrl.replace("{/other_user}", ""))
+    }
+    return decodeFromString<List<UserResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchEvents(eventsUrl: String): List<EventResponse> {
-    val eventsJson = fetch(eventsUrl.replace("{/privacy}", ""))
-    return decodeFromString<List<EventResponse>>(eventsJson)
+    val json = persistence(eventsUrl) {
+         fetch(eventsUrl.replace("{/privacy}", ""))
+    }
+    return decodeFromString<List<EventResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchOrganizations(orgsUrl: String): List<OrganizationResponse> {
-    val orgsJson = fetch(orgsUrl)
-    return decodeFromString<List<OrganizationResponse>>(orgsJson)
+    val json = persistence(orgsUrl) {
+        fetch(orgsUrl)
+    }
+    return decodeFromString<List<OrganizationResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchOrgMembers(membersUrl: String): List<UserResponse> {
-    val membersJson = fetch(membersUrl.replace("{/member}", ""))
-    return decodeFromString<List<UserResponse>>(membersJson)
+    val json = persistence(membersUrl) {
+        fetch(membersUrl.replace("{/member}", ""))
+    }
+    return decodeFromString<List<UserResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchRepositories(reposUrl: String): List<RepositoryResponse> {
-    val reposJson = fetch(reposUrl)
-    return decodeFromString<List<RepositoryResponse>>(reposJson)
+    val json = persistence(reposUrl) {
+        fetch(reposUrl)
+    }
+    return decodeFromString<List<RepositoryResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchRepository(repoUrl: String): RepositoryResponse {
-    val repoJson = fetch(repoUrl)
-    return decodeFromString<RepositoryResponse>(repoJson)
+    val json = persistence(repoUrl) {
+        fetch(repoUrl)
+    }
+    return decodeFromString<RepositoryResponse>(json)
 }
 
 suspend fun GithubApiProvider.fetchSubscriptions(subsUrl: String): List<RepositoryResponse> {
-    val subscriptionsJson = fetch(subsUrl)
-    return decodeFromString<List<RepositoryResponse>>(subscriptionsJson)
+    val json = persistence(subsUrl) {
+        fetch(subsUrl)
+    }
+    return decodeFromString<List<RepositoryResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchStarred(starredUrl: String): List<RepositoryResponse> {
-    val starredJson = fetch(starredUrl
-        .replace("{/owner}", "")
-        .replace("{/repo}", ""))
-    return decodeFromString<List<RepositoryResponse>>(starredJson)
+    val json = persistence(starredUrl) {
+        fetch(starredUrl
+            .replace("{/owner}", "")
+            .replace("{/repo}", ""))
+    }
+    return decodeFromString<List<RepositoryResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchReleases(releaseUrl: String): List<ReleaseResponse> {
-    val releasesJson = fetch(releaseUrl.replace("{/id}", ""))
-    return decodeFromString<List<ReleaseResponse>>(releasesJson)
+    val json = persistence(releaseUrl) {
+        fetch(releaseUrl.replace("{/id}", ""))
+    }
+    return decodeFromString<List<ReleaseResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchCommits(commitsUrl: String): List<CommitResponse> {
-    val commitsJson = fetch(commitsUrl.replace("{/sha}", ""))
-    if (commitsJson.contains("Git Repository is empty")) {
+    val json = persistence(commitsUrl) {
+        fetch(commitsUrl.replace("{/sha}", ""))
+    }
+    if (json.contains("Git Repository is empty")) {
         return decodeFromString<List<CommitResponse>>("[]")
     }
-    return decodeFromString<List<CommitResponse>>(commitsJson)
+    return decodeFromString<List<CommitResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchIssues(issuesUrl: String): List<IssueResponse> {
-    val issuesJson = fetch(issuesUrl.replace("{/number}", ""))
-    return decodeFromString<List<IssueResponse>>(issuesJson)
+    val json = persistence(issuesUrl) {
+        fetch(issuesUrl.replace("{/number}", ""))
+    }
+    return decodeFromString<List<IssueResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchIssueEvents(issueEventsUrl: String): List<IssueEventResponse> {
-    val issueEventsJson = fetch(issueEventsUrl.replace("{/number}", ""))
-    return decodeFromString<List<IssueEventResponse>>(issueEventsJson)
+    val json = persistence(issueEventsUrl) {
+        fetch(issueEventsUrl.replace("{/number}", ""))
+    }
+    return decodeFromString<List<IssueEventResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchForks(forksUrl: String): List<RepositoryResponse> {
-    val forksJson = fetch(forksUrl)
-    return decodeFromString<List<RepositoryResponse>>(forksJson)
+    val json = persistence(forksUrl) {
+        fetch(forksUrl)
+    }
+    return decodeFromString<List<RepositoryResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchContributors(contributorsUrl: String): List<UserResponse> {
-    val contributorsJson = fetch(contributorsUrl)
-    if (contributorsJson.trim().isBlank()) {
+    val json = persistence(contributorsUrl) {
+        fetch(contributorsUrl)
+    }
+    if (json.trim().isBlank()) {
         return decodeFromString<List<UserResponse>>("[]")
     }
-    return decodeFromString<List<UserResponse>>(contributorsJson)
+    return decodeFromString<List<UserResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchStargazers(stargazersUrl: String): List<UserResponse> {
-    val stargazersJson = fetch(stargazersUrl)
-    return decodeFromString<List<UserResponse>>(stargazersJson)
+    val json = persistence(stargazersUrl) {
+        fetch(stargazersUrl)
+    }
+    return decodeFromString<List<UserResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchLanguages(languagesUrl: String): Map<String, Long> {
-    val languagesJson = fetch(languagesUrl)
-    return decodeFromString<Map<String, Long>>(languagesJson)
+    val json = persistence(languagesUrl) {
+        fetch(languagesUrl)
+    }
+    return decodeFromString<Map<String, Long>>(json)
 }
 
 const val baseUrl = "https://api.github.com"
