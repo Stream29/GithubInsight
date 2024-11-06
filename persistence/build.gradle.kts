@@ -22,6 +22,8 @@ kotlin {
                 implementation(libs.langchain4kt.utils)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.coroutines.run.blocking.all)
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.bson.kotlinx)
             }
         }
         val jvmTest by getting {
