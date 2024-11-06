@@ -1,7 +1,8 @@
 package io.github.stream29.githubinsight.analysis
 
-import io.github.stream29.githubinsight.Organization
-import io.github.stream29.githubinsight.Repository
+import io.github.stream29.githubinsight.spider.Organization
+import io.github.stream29.githubinsight.spider.Repository
+
 
 data class UserResult(
     val info: UserInfo,

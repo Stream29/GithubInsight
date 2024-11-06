@@ -1,6 +1,5 @@
-import io.github.stream29.githubinsight.GithubApiProvider
-import io.github.stream29.githubinsight.ResponseCollection
-import io.github.stream29.githubinsight.httpClient
+import io.github.stream29.githubinsight.spider.GithubApiProvider
+import io.github.stream29.githubinsight.spider.ResponseCollection
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlin.test.Test

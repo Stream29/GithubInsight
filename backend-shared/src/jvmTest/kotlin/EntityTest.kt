@@ -1,5 +1,8 @@
-import io.github.stream29.githubinsight.*
+import io.github.stream29.githubinsight.spider.EntityProcessor
+import io.github.stream29.githubinsight.spider.GithubApiProvider
+import io.github.stream29.githubinsight.spider.Organization
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Test
 
@@ -22,7 +25,7 @@ class EntityTest {
         val user = runBlocking {
             entityProcessor.toUser(responseCollection)
         }
-        println(json.encodeToString(User.serializer(), user))
+        println(json.encodeToString(user))
 
         if (responseCollection.orgsResponse.isNotEmpty()) {
             val org0 = runBlocking {
@@ -44,7 +47,7 @@ class EntityTest {
                     githubApiProvider.fetchLanguages(responseCollection.reposResponse[0].languagesUrl),
                 )
             }
-            println(json.encodeToString(Repository.serializer(), repo0))
+            println(json.encodeToString(repo0))
         }
     }
 }

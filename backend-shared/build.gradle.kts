@@ -20,6 +20,8 @@ kotlin {
                 implementation(libs.mongodb.driver.kotlin.coroutine)
                 implementation(libs.langchain4kt.core)
                 implementation(libs.langchain4kt.utils)
+                implementation(libs.langchain4kt.api.google.gemini)
+                implementation(libs.langchain4kt.api.baidu.qianfan)
                 implementation(libs.ktor.client.java)
                 implementation(libs.ktor.core)
                 implementation(libs.kotlinx.coroutines.core)
