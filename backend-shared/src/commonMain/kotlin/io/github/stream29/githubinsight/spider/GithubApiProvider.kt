@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight.spider
 
+import io.github.stream29.githubinsight.entities.UserInfo
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -30,6 +31,29 @@ class GithubApiProvider(
         return responseBody
     }
 }
+
+suspend fun GithubApiProvider.getUser(login: String): UserInfo =
+    fetchUser(login).run {
+        UserInfo(
+            company = company,
+            blog = blog,
+            location = location,
+            publicRepos = publicRepos?.toInt() ?: 0,
+            publicGists = 0,
+            followersAmount = 0,
+            followingAmount = 0,
+            login = login,
+            name = name?: login,
+            avatarUrl = avatarUrl,
+            bio = bio,
+            email = email,
+            organizations = listOf("todo"),
+            followers = listOf("todo"),
+            followingUrl = listOf("todo"),
+            subscriptionsUrl = "todo",
+            reposUrl = reposUrl,
+        )
+    }
 
 suspend fun GithubApiProvider.fetchBase(login: String): ResponseCollection = coroutineScope {
     val userResponse = fetchUser(login)

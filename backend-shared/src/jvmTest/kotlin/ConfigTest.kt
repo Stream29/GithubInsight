@@ -1,4 +1,3 @@
-import com.charleskorn.kaml.Yaml
 import io.github.stream29.githubinsight.*
 import kotlinx.serialization.encodeToString
 import kotlin.test.Test

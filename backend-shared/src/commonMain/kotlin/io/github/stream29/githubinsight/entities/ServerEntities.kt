@@ -1,13 +1,15 @@
 package io.github.stream29.githubinsight.entities
 
-import io.github.stream29.githubinsight.analysis.ContributionVector
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UserResult(
     val login: String,
     val talentRank: ContributionVector<String>,
     val nation: Estimated<String>
 )
 
+@Serializable
 data class UserInfo(
     val login: String,
     val name: String,
@@ -37,7 +39,13 @@ data class UserInfo(
 //    val payload: Payload
 //)
 
+@Serializable
 data class Estimated<T>(
     val belief: Int,
     val value: T
+)
+
+@Serializable
+data class ContributionVector<T>(
+    val contributionMap: Map<String, T>
 )
