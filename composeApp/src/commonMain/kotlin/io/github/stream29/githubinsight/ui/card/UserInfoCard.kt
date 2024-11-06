@@ -24,15 +24,15 @@ import io.github.stream29.githubinsight.type.UserInfo
 @Composable
 fun UserInfoCard(
     index: String,
-    userInfo: UserInfo = UserInfo,
-    globalUserName: MutableState<String>,
+    userInfo: UserInfo,
+    globalUserLogin: MutableState<String>,
     onStateChange: () -> Unit
 ) {
     Card(
         contentColor = MaterialTheme.colors.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
         onClick = {
-            globalUserName.value = userInfo.name
+            globalUserLogin.value = userInfo.name
             onStateChange()
         }
     ) {
@@ -46,16 +46,21 @@ fun UserInfoCard(
                 fontSize = 20.sp,
                 modifier = Modifier.weight(1f)
             )
-            Text(
-                text = userInfo.bio
-            )
+
+            userInfo.bio?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
+
             AsyncImage(
-                model = "https://avatars.githubusercontent.com/u/16459786?v=4",
+                model = userInfo.avatarUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(48.dp).clip(CircleShape)
             )
-            Text(text = userInfo.name, modifier = Modifier.padding(start = 8.dp))
+            Text(text = userInfo.login, modifier = Modifier.padding(start = 8.dp))
         }
     }
 }

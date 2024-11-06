@@ -9,15 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.stream29.githubinsight.type.UserInfo
+import io.github.stream29.githubinsight.entityMapExample
 import io.github.stream29.githubinsight.ui.card.UserInfoCard
 import io.github.stream29.githubinsight.ui.component.SearchBar
 import io.github.stream29.githubinsight.ui.component.SelectCountry
 
 @Composable
-fun AllUsers(onStateChange: () -> Unit, globalUserName: MutableState<String>) {
+fun AllUsers(onStateChange: () -> Unit, globalUserLogin: MutableState<String>) {
     Column(horizontalAlignment = Alignment.Start) {
-        Text(text = globalUserName.value)
+        Text(text = globalUserLogin.value)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(verticalArrangement = Arrangement.Center) {
                 SelectCountry()
@@ -25,9 +25,13 @@ fun AllUsers(onStateChange: () -> Unit, globalUserName: MutableState<String>) {
             SearchBar(modifier = Modifier.align(Alignment.CenterVertically))
         }
         LazyColumn {
-            for (i in 1..30) {
+            var index = 1;
+            for (login in entityMapExample.keys) {
                 item {
-                    UserInfoCard(index = i.toString(), userInfo = UserInfo, globalUserName, onStateChange)
+                    UserInfoCard(index = index++.toString(),
+                        entityMapExample[login]!!.userInfo,
+                        globalUserLogin,
+                        onStateChange)
                 }
             }
         }
