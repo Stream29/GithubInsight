@@ -33,7 +33,7 @@ data class GithubAuthConfig(
 
 @Serializable
 sealed interface ChatApiConfig {
-    fun getApiProvider(httpClient: HttpClient): ChatApiProvider<*>
+    fun getApiProvider(): ChatApiProvider<*>
 }
 
 @Serializable
@@ -45,7 +45,7 @@ data class BaiduQianfanAuthConfig(
     val secretKey: String,
     val model: String
 ) : ChatApiConfig {
-    override fun getApiProvider(httpClient: HttpClient) =
+    override fun getApiProvider() =
         QianfanApiProvider(httpClient, apiKey, secretKey, model)
 }
 
@@ -56,7 +56,7 @@ data class GoogleGeminiConfig(
     val apiKey: String,
     val model: String
 ) : ChatApiConfig {
-    override fun getApiProvider(httpClient: HttpClient) =
+    override fun getApiProvider() =
         GeminiApiProvider(httpClient, GeminiGenerationConfig(), apiKey, model)
 }
 

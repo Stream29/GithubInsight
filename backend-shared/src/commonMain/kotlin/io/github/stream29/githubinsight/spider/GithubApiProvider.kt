@@ -1,6 +1,7 @@
 package io.github.stream29.githubinsight.spider
 
 import io.github.stream29.githubinsight.entities.UserInfo
+import io.github.stream29.githubinsight.httpClient
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -10,7 +11,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.Json
 
 class GithubApiProvider(
-    private val httpClient: HttpClient,
     val authToken: String
 ) {
     private val json = Json {
