@@ -14,18 +14,18 @@ data class UserInfo(
     val login: String,
     val name: String,
     val avatarUrl: String,
-    val bio: String?,
-    val email: String?,
-    val organizations: List<String>?,
+    val bio: String? = null,
+    val email: String? = null,
+    val organizations: List<String>? = null,
     val followers: List<String>,
     val following: List<String>,
 //    订阅的仓库
     val subscriptions: List<String>,
 //    存储仓库请求路径：{login}/{repoName}
     val repos: List<String>,
-    val company: String?,
-    val blog: String?,
-    val location: String?,
+    val company: String? = null,
+    val blog: String? = null,
+    val location: String? = null,
     val publicRepos: Int,
     val publicGists: Int,
     val followersAmount: Int,
@@ -45,7 +45,7 @@ data class Repository(
     val stargazers: List<String>,
     val contributors: List<String>,
     val subscribers: List<String>,
-    val commits: UserCommit,
+    val commits: List<UserCommit>,
     val stargazersCount: Int,
     val watchersCount: Int,
     val forksCount: Int,
@@ -56,7 +56,7 @@ data class Repository(
 data class Organization(
     val login: String,
     val members: List<String>,
-    val description: String?
+    val description: String? = null
 )
 
 @Serializable
