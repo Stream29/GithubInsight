@@ -1,9 +1,11 @@
 package io.github.stream29.githubinsight.spider
 
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.kotlin.client.coroutine.MongoClient
+import io.github.stream29.githubinsight.BackendConfig
 import io.github.stream29.githubinsight.entities.UserInfo
-import io.github.stream29.githubinsight.httpClient
 import io.github.stream29.githubinsight.fromYamlString
-import io.ktor.client.*
+import io.github.stream29.githubinsight.httpClient
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -54,7 +56,7 @@ suspend fun GithubApiProvider.getUser(login: String): UserInfo =
             followersAmount = 0,
             followingAmount = 0,
             login = login,
-            name = name?: login,
+            name = name ?: login,
             avatarUrl = avatarUrl,
             bio = bio,
             email = email,
@@ -115,7 +117,7 @@ suspend fun GithubApiProvider.fetchUsers(usersUrl: String): List<UserResponse> {
 
 suspend fun GithubApiProvider.fetchEvents(eventsUrl: String): List<EventResponse> {
     val json = persistence(eventsUrl) {
-         fetch(eventsUrl.replace("{/privacy}", ""))
+        fetch(eventsUrl.replace("{/privacy}", ""))
     }
     return decodeFromString<List<EventResponse>>(json)
 }
@@ -157,9 +159,11 @@ suspend fun GithubApiProvider.fetchSubscriptions(subsUrl: String): List<Reposito
 
 suspend fun GithubApiProvider.fetchStarred(starredUrl: String): List<RepositoryResponse> {
     val json = persistence(starredUrl) {
-        fetch(starredUrl
-            .replace("{/owner}", "")
-            .replace("{/repo}", ""))
+        fetch(
+            starredUrl
+                .replace("{/owner}", "")
+                .replace("{/repo}", "")
+        )
     }
     return decodeFromString<List<RepositoryResponse>>(json)
 }

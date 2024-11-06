@@ -9,7 +9,6 @@ class BalancingTest {
     fun balancingApiTest() {
         val apiProviders = listOf(
             GithubApiProvider(
-                httpClient = httpClient,
                 authToken = System.getenv("GITHUB_TOKEN")
             )
         )

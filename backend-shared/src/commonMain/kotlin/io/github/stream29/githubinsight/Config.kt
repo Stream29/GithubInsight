@@ -1,10 +1,13 @@
 package io.github.stream29.githubinsight
 
+import io.github.stream29.githubinsight.spider.BalancingApiProvider
+import io.github.stream29.githubinsight.spider.GithubApiProvider
+import io.github.stream29.githubinsight.spider.Spider
 import io.github.stream29.langchain4kt.api.baiduqianfan.QianfanApiProvider
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiApiProvider
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiGenerationConfig
 import io.github.stream29.langchain4kt.core.ChatApiProvider
-import io.ktor.client.*
+import io.github.stream29.langchain4kt.utils.SwitchOnFailApiProvider
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -27,9 +30,14 @@ data class BackendConfig(
 
 @Serializable
 data class GithubAuthConfig(
-    val actor: String,
     val token: String
 )
+
+fun GithubAuthConfig.toGithubApiProvider() =
+    GithubApiProvider(token)
+
+fun List<GithubAuthConfig>.toSpider() =
+    Spider(BalancingApiProvider(this.map { it.toGithubApiProvider() }))
 
 @Serializable
 sealed interface ChatApiConfig {
@@ -59,6 +67,9 @@ data class GoogleGeminiConfig(
     override fun getApiProvider() =
         GeminiApiProvider(httpClient, GeminiGenerationConfig(), apiKey, model)
 }
+
+fun List<ChatApiConfig>.toSwitchOnFailApiProvider() =
+    SwitchOnFailApiProvider(this.map { it.getApiProvider() })
 
 @Serializable
 data class PersistenceConfig(

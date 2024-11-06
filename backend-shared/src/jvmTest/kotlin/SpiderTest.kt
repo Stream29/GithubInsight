@@ -9,7 +9,6 @@ class SpiderTest {
         val balancingApiProvider = BalancingApiProvider(
             listOf(
                 GithubApiProvider(
-                    httpClient = httpClient,
                     authToken = System.getenv("GITHUB_TOKEN")
                 )
             )

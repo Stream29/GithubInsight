@@ -20,7 +20,6 @@ class ConfigTest {
             ),
             githubApi = listOf(
                 GithubAuthConfig(
-                    actor = System.getenv("GITHUB_ACTOR")!!,
                     token = System.getenv("GITHUB_TOKEN")!!
                 )
             )

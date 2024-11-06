@@ -9,7 +9,6 @@ class ApiTest {
     @Test
     fun fetchAllTest() {
         val githubApiProvider = GithubApiProvider(
-            httpClient = httpClient,
             authToken = System.getenv("GITHUB_TOKEN")
         )
         val responseCollection = runBlocking {

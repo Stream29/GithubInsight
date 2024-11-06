@@ -8,7 +8,6 @@ class EntityTest {
     @Test
     fun processTest() {
         val githubApiProvider = GithubApiProvider(
-            httpClient = httpClient,
             authToken = System.getenv("GITHUB_TOKEN")
         )
         val json = Json {
