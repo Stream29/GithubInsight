@@ -74,6 +74,7 @@ fun Form(
                         onCheckedChange = { isVisualTransformation = it }
                     ) {
                         IconButton(onClick = { isVisualTransformation = !isVisualTransformation }) {
+                            //TODO: change icon
                             Icon(
                                 imageVector = Icons.Filled.Edit,
                                 contentDescription = "isVisible"
