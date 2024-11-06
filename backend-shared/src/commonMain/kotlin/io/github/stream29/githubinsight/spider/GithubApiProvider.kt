@@ -26,9 +26,9 @@ class GithubApiProvider(
         .readText()
         .let { BackendConfig.fromYamlString(it) }
     private val mongoClient = backendConfig.mongodb.connectionString.let { MongoClient.create(it) }
-    private val mongoDatabase = mongoClient.getDatabase("github-insight")
-    val userResponseCollection = mongoDatabase.getCollection<UserResponse>("api-user")
-    val jsonCollection = mongoDatabase.getCollection<JsonCollection>("api-json")
+    private val mongoDatabase = mongoClient.getDatabase("github_insight")
+    val userResponseCollection = mongoDatabase.getCollection<UserResponse>("api_user")
+    val jsonCollection = mongoDatabase.getCollection<JsonCollection>("api_json")
 
     internal inline fun <reified T> decodeFromString(responseBody: String): T {
         return json.decodeFromString<T>(responseBody)
