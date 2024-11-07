@@ -1,9 +1,10 @@
-package io.github.stream29.githubinsight.spider
+package io.github.stream29.githubinsight.spider.utils
 
 import io.github.stream29.githubinsight.common.entities.Organization
 import io.github.stream29.githubinsight.common.entities.Repository
 import io.github.stream29.githubinsight.common.entities.UserCommit
 import io.github.stream29.githubinsight.common.entities.UserInfo
+import io.github.stream29.githubinsight.spider.*
 
 class EntityProcessor {
     companion object {

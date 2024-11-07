@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight.spider
+package io.github.stream29.githubinsight.spider.Exception
 
 class FetchException(
     message: String,

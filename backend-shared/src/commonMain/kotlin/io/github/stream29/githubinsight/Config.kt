@@ -1,7 +1,7 @@
 package io.github.stream29.githubinsight
 
-import io.github.stream29.githubinsight.spider.BalancingApiProvider
-import io.github.stream29.githubinsight.spider.GithubApiProvider
+import io.github.stream29.githubinsight.spider.utils.BalancingApiProvider
+import io.github.stream29.githubinsight.spider.utils.GithubApiProvider
 import io.github.stream29.githubinsight.spider.Spider
 import io.github.stream29.langchain4kt.api.baiduqianfan.QianfanApiProvider
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiApiProvider

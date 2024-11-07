@@ -3,6 +3,8 @@ import io.github.stream29.githubinsight.BackendConfig
 import io.github.stream29.githubinsight.common.entities.Repository
 import io.github.stream29.githubinsight.fromYamlString
 import io.github.stream29.githubinsight.spider.*
+import io.github.stream29.githubinsight.spider.utils.BalancingApiProvider
+import io.github.stream29.githubinsight.spider.utils.GithubApiProvider
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Test

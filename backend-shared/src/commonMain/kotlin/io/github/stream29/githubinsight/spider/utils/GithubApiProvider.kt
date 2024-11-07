@@ -1,8 +1,9 @@
-package io.github.stream29.githubinsight.spider
+package io.github.stream29.githubinsight.spider.utils
 
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import io.github.stream29.githubinsight.httpClient
+import io.github.stream29.githubinsight.spider.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
