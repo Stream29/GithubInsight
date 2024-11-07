@@ -5,6 +5,7 @@ import io.github.stream29.githubinsight.common.entities.ContributionVector
 import io.github.stream29.githubinsight.common.entities.Estimated
 import io.github.stream29.githubinsight.common.entities.UserInfo
 import io.github.stream29.githubinsight.common.entities.UserResult
+import io.github.stream29.githubinsight.ui.page.AllUsers
 import kotlinx.coroutines.runBlocking
 
 var user: ClientEntities? = ClientEntities(
@@ -37,6 +38,6 @@ var user: ClientEntities? = ClientEntities(
         )
     ),
 )
-var userList: List<ClientEntities>? = listOf(user!!)
+var userList: List<ClientEntities>? = runBlocking { backendApiProvider!!.allUser(0, 10) }
 
 fun UserEntities(userLogin: String) = runBlocking { backendApiProvider!!.getUser(userLogin) }

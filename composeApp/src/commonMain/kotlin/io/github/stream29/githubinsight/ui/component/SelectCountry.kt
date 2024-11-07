@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SelectCountry(selectedCountry: MutableState<String>) {
     var expanded by remember { mutableStateOf(false) }
-    val countries = listOf("None","China","America","UK","Japan","Korea","Germany","France","Italy","Canada","Australia")
+    val countries = listOf("None","中国","美国","英国","日本","韩国","德国","法国","意大利","加拿大","澳大利亚")
     Button(
         modifier = Modifier.width(80.dp).height(56.dp).padding(4.dp),
         onClick = { expanded = true }

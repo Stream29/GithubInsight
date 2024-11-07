@@ -32,7 +32,7 @@ fun UserInfoCard(
         contentColor = MaterialTheme.colors.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
         onClick = {
-            globalUserLogin.value = user.userInfo.name
+            globalUserLogin.value = user.userInfo.login
             onStateChange()
         }
     ) {
