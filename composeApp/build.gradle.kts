@@ -45,6 +45,7 @@ kotlin {
             implementation(libs.coil.network.ktor3)
             implementation(libs.ktor.core)
             implementation("io.github.koalaplot:koalaplot-core:0.6.4")
+            implementation(project(":common"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
