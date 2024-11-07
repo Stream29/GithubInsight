@@ -133,6 +133,9 @@ suspend fun GithubApiProvider.fetchCollaborators(collaboratorsUrl: String): List
     val json = persistence(collaboratorsUrl) {
         fetch(collaboratorsUrl).replace("{/collaborator}", "")
     }
+    if (json.contains("Not Found")) {
+        return decodeFromString<List<UserResponse>>("[]")
+    }
     return decodeFromString<List<UserResponse>>(json)
 }
 
@@ -157,10 +160,13 @@ suspend fun GithubApiProvider.fetchTags(tagsUrl: String): List<TagResponse> {
     return decodeFromString<List<TagResponse>>(json)
 }
 
-suspend fun GithubApiProvider.fetchReadme(repoUrl: String): Readme {
+suspend fun GithubApiProvider.fetchReadme(repoUrl: String): Readme? {
     val readmeUrl = "$repoUrl/contents/README.md"
     val json = persistence(readmeUrl) {
         fetch(readmeUrl)
+    }
+    if (json.contains("This repository is empty")) {
+        return null
     }
     return decodeFromString<Readme>(json)
 }

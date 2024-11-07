@@ -49,7 +49,7 @@ class EntityProcessor {
             collaborators: List<UserResponse>,
             commits: List<CommitResponse>,
             tags: List<TagResponse>,
-            readme: Readme,
+            readmeContent: String,
         ): Repository {
             return Repository(
                 name = repositoryResponse.name,
@@ -64,7 +64,7 @@ class EntityProcessor {
                 watchersCount = repositoryResponse.watchersCount.toInt(),
                 forksCount = repositoryResponse.forksCount.toInt(),
                 topics = repositoryResponse.topics,
-                readme = readme.content,
+                readme = readmeContent,
             )
         }
 

@@ -4,7 +4,6 @@ import io.github.stream29.githubinsight.common.entities.Organization
 import io.github.stream29.githubinsight.common.entities.Repository
 import io.github.stream29.githubinsight.common.entities.UserInfo
 import io.github.stream29.githubinsight.spider.utils.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 
@@ -23,22 +22,22 @@ class Spider (
         val repositoryResponse = balancingApiProvider.execute { a ->
             a.fetchRepository("$RepoUrl/$repoFullName")
         }
-        val contributors = async { balancingApiProvider.execute { a -> a.fetchContributors(repositoryResponse.contributorsUrl) } }
-        val languages = async { balancingApiProvider.execute { a -> a.fetchLanguages(repositoryResponse.languagesUrl) } }
-        val subscribers = async { balancingApiProvider.execute { a -> a.fetchSubscribers(repositoryResponse.subscribersUrl) } }
-        val collaborators = async { balancingApiProvider.execute { a -> a.fetchCollaborators(repositoryResponse.collaboratorsUrl) } }
-        val commits = async { balancingApiProvider.execute { a -> a.fetchCommits(repositoryResponse.commitsUrl) } }
-        val tags = async { balancingApiProvider.execute { a -> a.fetchTags(repositoryResponse.tagsUrl) } }
-        val readme = async { balancingApiProvider.execute { a -> a.fetchReadme(repositoryResponse.url) } }
+        val contributors = balancingApiProvider.execute { a -> a.fetchContributors(repositoryResponse.contributorsUrl) }
+        val languages = balancingApiProvider.execute { a -> a.fetchLanguages(repositoryResponse.languagesUrl) }
+        val subscribers = balancingApiProvider.execute { a -> a.fetchSubscribers(repositoryResponse.subscribersUrl) }
+        val collaborators = balancingApiProvider.execute { a -> a.fetchCollaborators(repositoryResponse.collaboratorsUrl) }
+        val commits = balancingApiProvider.execute { a -> a.fetchCommits(repositoryResponse.commitsUrl) }
+        val tags = balancingApiProvider.execute { a -> a.fetchTags(repositoryResponse.tagsUrl) }
+        val readme = balancingApiProvider.execute { a -> a.fetchReadme(repositoryResponse.url) }
         EntityProcessor.toRepository(
             repositoryResponse,
-            contributors.await(),
-            languages.await(),
-            subscribers.await(),
-            collaborators.await(),
-            commits.await(),
-            tags.await(),
-            readme.await(),
+            contributors,
+            languages,
+            subscribers,
+            collaborators,
+            commits,
+            tags,
+            readme?.content ?: "",
         )
     }
 

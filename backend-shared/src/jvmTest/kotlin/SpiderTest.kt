@@ -35,7 +35,7 @@ class SpiderTest {
         }
 
         runBlocking {
-            println(json.encodeToString(Repository.serializer(), spider.getRepository("Moistrocic/langchain4kt")))
+            println(json.encodeToString(Repository.serializer(), spider.getRepository("Moistrocic/empty-test")))
         }
     }
 }
