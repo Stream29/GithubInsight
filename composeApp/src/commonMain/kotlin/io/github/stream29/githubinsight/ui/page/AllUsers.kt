@@ -18,7 +18,6 @@ import io.github.stream29.githubinsight.userList
 fun AllUsers(onStateChange: () -> Unit, globalUserLogin: MutableState<String>) {
     val userList = userList!!
     Column(horizontalAlignment = Alignment.Start) {
-        Text(text = globalUserLogin.value)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(verticalArrangement = Arrangement.Center) {
                 SelectCountry()
