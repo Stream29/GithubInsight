@@ -32,7 +32,7 @@ suspend fun Analyser.analyseUser(userLogin: String): UserResult = coroutineScope
     val talentRank = async { analyseTalentRank(userInfo) }
     val result = UserResult(
         login = userLogin,
-        talentRank = talentRank.await(),
+        talentRank = talentRank.await() ?: ContributionVector(emptyMap()),
         nation = nation.await()
     )
     launch {
@@ -45,12 +45,13 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
     val repositories = userInfo.repos.map {
         async { analyseRepo(it) }
     }.awaitAll()
-    val techSet = repositories.asSequence().map { it.techValue }.fold(mutableSetOf<String>()) { acc, map ->
-        acc.addAll(map.keys); acc
-    }
+    val techSet =
+        repositories.asSequence().filterNotNull().map { it.techValue }.fold(mutableSetOf<String>()) { acc, map ->
+            acc.addAll(map.keys); acc
+        }
     val respondent = chatApiProvider.asRespondent()
     val techValue = techSet.associateWith { tech ->
-        val relevantRepos = repositories.asSequence()
+        val relevantRepos = repositories.asSequence().filterNotNull()
             .filter { it.techValue.containsKey(tech) }
             .filter { it.contributionTotal > 0 }
             .filter { it.contributeMap.contains(userInfo.login) }
@@ -99,11 +100,11 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
     ContributionVector(techValue)
 }
 
-suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
+suspend fun Analyser.analyseRepo(repo: String): RepoResult? = coroutineScope {
     repoResultCollection.find(eq("name", repo))
         .firstOrNull()
         ?.let { return@coroutineScope it }
-    val repoInfo = githubSpider.getRepository(repo)
+    val repoInfo = githubSpider.getRepository(repo) ?: return@coroutineScope null
     val contributors = repoInfo.contributors
 
     val readme = repoInfo.readme
