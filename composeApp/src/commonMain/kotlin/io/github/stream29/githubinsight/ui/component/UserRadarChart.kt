@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.koalaplot.core.ChartLayout
 import io.github.koalaplot.core.Symbol
 import io.github.koalaplot.core.legend.LegendLocation
@@ -18,9 +19,7 @@ import io.github.koalaplot.core.polar.rememberFloatRadialAxisModel
 import io.github.koalaplot.core.style.KoalaPlotTheme.axis
 import io.github.koalaplot.core.style.LineStyle
 import io.github.koalaplot.core.util.ExperimentalKoalaPlotApi
-import io.github.koalaplot.core.util.toString
 import io.github.stream29.githubinsight.common.entities.ContributionVector
-import io.github.stream29.githubinsight.ui.component.sample.ChartTitle
 import io.github.stream29.githubinsight.ui.component.sample.paddingMod
 
 @OptIn(ExperimentalKoalaPlotApi::class)
@@ -32,19 +31,23 @@ fun UserRadarChart(thumbnail: Boolean, title: String, talentRank: ContributionVe
     val values = map.values.map { it.second.toFloat() }.toList().take(10)
     ChartLayout(
         modifier = paddingMod,
-        title = { ChartTitle(title) },
         legendLocation = LegendLocation.BOTTOM
     ) {
         val ram = rememberFloatRadialAxisModel(
             listOf(
                 0f,
+                10f,
                 20f,
+                30f,
                 40f,
+                50f,
                 60f,
+                70f,
                 80f,
+                90f,
                 100f
             )
-        ) // population in millions
+        )
         val aam = rememberCategoryAngularAxisModel(keys)
 
         val angularAxisGridLineStyle = if (thumbnail) {
@@ -56,8 +59,13 @@ fun UserRadarChart(thumbnail: Boolean, title: String, talentRank: ContributionVe
         PolarGraph(
             ram,
             aam,
-            radialAxisLabels = { if (!thumbnail) Text(it.toString(1)) },
-            { if (!thumbnail) Text(it) },
+            radialAxisLabels = {},
+            angularAxisLabels = {
+                if (!thumbnail) Text(
+                    it,
+                    fontSize = 10.sp
+                )
+            },
             polarGraphProperties = PolarGraphDefaults.PolarGraphPropertyDefaults()
                 .copy(
                     angularAxisGridLineStyle = angularAxisGridLineStyle,
@@ -66,7 +74,7 @@ fun UserRadarChart(thumbnail: Boolean, title: String, talentRank: ContributionVe
         ) {
             val polarList: MutableList<PolarPoint<Float, String>> = mutableListOf()
             for (index in keys.indices) {
-                val point = PolarPoint<Float, String>(values[index], keys[index])
+                val point = PolarPoint(values[index], keys[index])
                 polarList.add(point)
             }
             PolarPlotSeries(
