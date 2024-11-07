@@ -10,7 +10,7 @@ fun InputLoginCard(
 ) {
     Form(
         form = keyMap,
-        type = "Homepage Address",
+        type = "userLogin",
         onStateChange = onStateChange
     )
 }
