@@ -35,6 +35,7 @@ dependencyResolutionManagement {
                 password = System.getenv("GITHUB_TOKEN")!!
             }
         }
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
