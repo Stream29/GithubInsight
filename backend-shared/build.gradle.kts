@@ -17,6 +17,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(project(":common"))
                 api(libs.mongodb.driver.kotlin.coroutine)
                 api(libs.langchain4kt.core)
                 api(libs.langchain4kt.utils)

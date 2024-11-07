@@ -3,7 +3,7 @@ package io.github.stream29.githubinsight.spider
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.github.stream29.githubinsight.BackendConfig
-import io.github.stream29.githubinsight.entities.UserInfo
+import io.github.stream29.githubinsight.common.entities.UserInfo
 import io.github.stream29.githubinsight.fromYamlString
 import io.github.stream29.githubinsight.httpClient
 import io.ktor.client.request.*

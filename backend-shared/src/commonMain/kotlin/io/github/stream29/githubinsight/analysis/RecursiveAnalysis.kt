@@ -2,7 +2,7 @@ package io.github.stream29.githubinsight.analysis
 
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import io.github.stream29.githubinsight.entities.*
+import io.github.stream29.githubinsight.common.entities.*
 import io.github.stream29.githubinsight.spider.Spider
 import io.github.stream29.langchain4kt.core.ChatApiProvider
 import io.github.stream29.langchain4kt.core.asRespondent
@@ -44,7 +44,7 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector<S
     val repositories = userInfo.repos.map {
         async { analyseRepo(it) }
     }.awaitAll()
-    ContributionVector(emptyMap())
+    ContributionVector(mapOf("Java" to "很强"))
 }
 
 suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
@@ -57,7 +57,7 @@ suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
     val result =
         if (repoInfo.readme != null) RepoResult(
             name = repo,
-            techValue = analyseTechValue(repoInfo, repoInfo.readme),
+            techValue = analyseTechValue(repoInfo, repoInfo.readme!!),
             contributeMap = contributors.associateWith { contributor ->
                 repoInfo.commits.count { it.author == contributor }
             },

@@ -1,4 +1,4 @@
-package io.github.stream29.githubinsight.entities
+package io.github.stream29.githubinsight.common.entities
 
 import kotlinx.serialization.Serializable
 
