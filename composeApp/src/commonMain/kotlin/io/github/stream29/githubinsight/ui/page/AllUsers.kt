@@ -38,8 +38,8 @@ fun AllUsers(onStateChange: () -> Unit, globalUserLogin: MutableState<String>) {
                         .talentRank
                         .contributionMap
                         .getOrElse(searchTopic.value) { Pair(0, 0) }
-                            .second
-                }
+                        .second
+                }.reversed()
             }
 
             var index = 1
