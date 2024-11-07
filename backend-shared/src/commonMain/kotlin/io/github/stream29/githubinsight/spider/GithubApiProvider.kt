@@ -51,10 +51,6 @@ suspend fun GithubApiProvider.getUser(login: String): UserInfo =
             company = company,
             blog = blog,
             location = location,
-            publicRepos = publicRepos?.toInt() ?: 0,
-            publicGists = 0,
-            followersAmount = 0,
-            followingAmount = 0,
             login = login,
             name = name ?: login,
             avatarUrl = avatarUrl,
@@ -150,11 +146,40 @@ suspend fun GithubApiProvider.fetchRepository(repoUrl: String): RepositoryRespon
     return decodeFromString<RepositoryResponse>(json)
 }
 
-suspend fun GithubApiProvider.fetchSubscriptions(subsUrl: String): List<RepositoryResponse> {
-    val json = persistence(subsUrl) {
-        fetch(subsUrl)
+suspend fun GithubApiProvider.fetchCollaborators(collaboratorsUrl: String): List<UserResponse> {
+    val json = persistence(collaboratorsUrl) {
+        fetch(collaboratorsUrl).replace("{/collaborator}", "")
+    }
+    return decodeFromString<List<UserResponse>>(json)
+}
+
+suspend fun GithubApiProvider.fetchSubscribers(subscribersUrl: String): List<UserResponse> {
+    val json = persistence(subscribersUrl) {
+        fetch(subscribersUrl)
+    }
+    return decodeFromString<List<UserResponse>>(json)
+}
+
+suspend fun GithubApiProvider.fetchSubscriptions(subscriptionsUrl: String): List<RepositoryResponse> {
+    val json = persistence(subscriptionsUrl) {
+        fetch(subscriptionsUrl)
     }
     return decodeFromString<List<RepositoryResponse>>(json)
+}
+
+suspend fun GithubApiProvider.fetchTags(tagsUrl: String): List<TagResponse> {
+    val json = persistence(tagsUrl) {
+        fetch(tagsUrl)
+    }
+    return decodeFromString<List<TagResponse>>(json)
+}
+
+suspend fun GithubApiProvider.fetchReadme(repoUrl: String): Readme {
+    val readmeUrl = "$repoUrl/contents/README.md"
+    val json = persistence(readmeUrl) {
+        fetch(readmeUrl)
+    }
+    return decodeFromString<Readme>(json)
 }
 
 suspend fun GithubApiProvider.fetchStarred(starredUrl: String): List<RepositoryResponse> {
@@ -223,11 +248,11 @@ suspend fun GithubApiProvider.fetchStargazers(stargazersUrl: String): List<UserR
     return decodeFromString<List<UserResponse>>(json)
 }
 
-suspend fun GithubApiProvider.fetchLanguages(languagesUrl: String): Map<String, Long> {
+suspend fun GithubApiProvider.fetchLanguages(languagesUrl: String): Map<String, Int> {
     val json = persistence(languagesUrl) {
         fetch(languagesUrl)
     }
-    return decodeFromString<Map<String, Long>>(json)
+    return decodeFromString<Map<String, Int>>(json)
 }
 
 const val baseUrl = "https://api.github.com"

@@ -32,16 +32,22 @@ class Spider (
         val repositoryResponse = balancingApiProvider.execute { a ->
             a.fetchRepository("$baseRepoUrl/$repoFullName")
         }
-        val forks = async { balancingApiProvider.execute { a -> a.fetchForks(repositoryResponse.forksUrl) } }
         val contributors = async { balancingApiProvider.execute { a -> a.fetchContributors(repositoryResponse.contributorsUrl) } }
-        val stargazers = async { balancingApiProvider.execute { a -> a.fetchStargazers(repositoryResponse.stargazersUrl) } }
         val languages = async { balancingApiProvider.execute { a -> a.fetchLanguages(repositoryResponse.languagesUrl) } }
+        val subscribers = async { balancingApiProvider.execute { a -> a.fetchSubscribers(repositoryResponse.subscribersUrl) } }
+        val collaborators = async { balancingApiProvider.execute { a -> a.fetchCollaborators(repositoryResponse.collaboratorsUrl) } }
+        val commits = async { balancingApiProvider.execute { a -> a.fetchCommits(repositoryResponse.commitsUrl) } }
+        val tags = async { balancingApiProvider.execute { a -> a.fetchTags(repositoryResponse.tagsUrl) } }
+        val readme = async { balancingApiProvider.execute { a -> a.fetchReadme(repositoryResponse.url) } }
         EntityProcessor.toRepository(
             repositoryResponse,
-            forks.await(),
             contributors.await(),
-            stargazers.await(),
             languages.await(),
+            subscribers.await(),
+            collaborators.await(),
+            commits.await(),
+            tags.await(),
+            readme.await(),
         )
     }
 }

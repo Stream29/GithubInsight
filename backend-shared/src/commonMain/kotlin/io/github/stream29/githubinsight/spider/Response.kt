@@ -83,8 +83,14 @@ data class RepositoryResponse(
     val url: String,
     @SerialName("commits_url")
     val commitsUrl: String,
+    @SerialName("tags_url")
+    val tagsUrl: String,
+    @SerialName("collaborators_url")
+    val collaboratorsUrl: String,
     @SerialName("contributors_url")
     val contributorsUrl: String,
+    @SerialName("subscribers_url")
+    val subscribersUrl: String,
     @SerialName("forks_url")
     val forksUrl: String,
     @SerialName("issue_comment_url")
@@ -138,6 +144,19 @@ data class RepositoryResponse(
     @SerialName("network_count")
     val networkCount: Long? = null,
     val license: License? = null,
+    val readme: String? = null,
+)
+
+@Serializable
+data class TagResponse(
+    val name: String,
+    @SerialName("zipball_url")
+    val zipballUrl: String,
+    @SerialName("tarball_url")
+    val tarballUrl: String,
+    val commit: CommitResponse,
+    @SerialName("node_id")
+    val nodeId: String,
 )
 
 @Serializable
@@ -156,6 +175,19 @@ data class License(
     val url: String? = null,
     @SerialName("node_id")
     val nodeId: String,
+)
+
+@Serializable
+data class Readme(
+    val name: String,
+    val path: String,
+    val sha: String,
+    val size: Long,
+    val url: String,
+    @SerialName("html_url")
+    val htmlUrl: String,
+    val content: String,
+    val encoding: String,
 )
 
 @Serializable
@@ -189,6 +221,7 @@ data class AssetResponse(
 @Serializable
 data class CommitResponse(
     val sha: String,
+    val url: String? = null,
     val message: String? = null,
     val author: UserResponse? = null,
     val committer: UserResponse? = null,
