@@ -20,9 +20,9 @@ fun App() {
         when (pageState) {
             -1 -> InputServerUrl({ pageState = 0 }, globalBaseUrl)
             0 -> InputUserLogin({ pageState = 1 }, globalUserLogin)
-            1 -> UserDetail({ pageState = 2 }, globalUserLogin, globalBaseUrl.value)
+            1 -> UserDetail({ pageState = 2 }, globalUserLogin)
             2 -> AllUsers({ pageState = 3 }, globalUserLogin)
-            3 -> UserDetail({ pageState = 2 }, globalUserLogin, globalBaseUrl.value)
+            3 -> UserDetail({ pageState = 2 }, globalUserLogin)
         }
     }
 }

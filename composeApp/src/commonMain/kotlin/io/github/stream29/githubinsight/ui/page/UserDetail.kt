@@ -27,18 +27,13 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.github.koalaplot.sample.polar.UserRadarChart
 import io.github.stream29.githubinsight.UserEntities
-import io.github.stream29.githubinsight.backendApiProvider
-import io.github.stream29.githubinsight.common.RemoteBackendApiProvider
-import io.github.stream29.githubinsight.httpClient
 import io.github.stream29.githubinsight.user
 
 @Composable
 fun UserDetail(
     onStateChange: () -> Unit,
-    userLogin: MutableState<String>,
-    globalUrl: String
+    userLogin: MutableState<String>
 ) {
-    backendApiProvider = RemoteBackendApiProvider(httpClient = httpClient, baseUrl = globalUrl)
     user = UserEntities(userLogin.value)
     val user = user!!
     Scaffold(
@@ -72,48 +67,55 @@ fun UserDetail(
         Column(
             horizontalAlignment = Alignment.Start
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AsyncImage(
-                    model = user.userInfo.avatarUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(120.dp).clip(CircleShape)
-                )
-                UserRadarChart(false, "contribution", user.userResult.talentRank)
+            Row {
+                Column(modifier = Modifier.weight(1f)) {
+                    AsyncImage(
+                        model = user.userInfo.avatarUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(120.dp).clip(CircleShape)
+                    )
+                    Text(
+                        text = "Name: ${user.userInfo.name}",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Text(
+                        text = "Bio: ${user.userInfo.bio}",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    if (user.userInfo.location != null) {
+                        Text(
+                            text = "Location: ${user.userInfo.location}",
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 30.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "Inferred Location: ${user.userResult.nation.value}",
+                            style = MaterialTheme.typography.h5,
+                            color = Color(201, 79, 79),
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        Text(
+                            text = "Confidence: ${user.userResult.nation.belief}",
+                            style = MaterialTheme.typography.h5,
+                            color = Color(201, 79, 79),
+                            modifier = Modifier.padding(top = 8.dp, bottom = 30.dp)
+                        )
+                    }
+                }
+                Row {
+                    UserRadarChart(
+                        false,
+                        user.userResult.talentRank,
+                        Modifier.size(460.dp).align(Alignment.CenterVertically)
+                    )
+                }
             }
-            Text(
-                text = "Name: ${user.userInfo.name}",
-                style = MaterialTheme.typography.h5,
-                modifier = Modifier.padding(8.dp)
-            )
-            Text(
-                text = "Bio: ${user.userInfo.bio}",
-                style = MaterialTheme.typography.h5,
-                modifier = Modifier.padding(8.dp)
-            )
 
-            if (user.userInfo.location != null) {
-                Text(
-                    text = "Location: ${user.userInfo.location}",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 30.dp)
-                )
-            } else {
-                Text(
-                    text = "Inferred Location: ${user.userResult.nation.value}",
-                    style = MaterialTheme.typography.h5,
-                    color = Color(201, 79, 79),
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = "Confidence: ${user.userResult.nation.belief}",
-                    style = MaterialTheme.typography.h5,
-                    color = Color(201, 79, 79),
-                    modifier = Modifier.padding(top = 8.dp, bottom = 30.dp)
-                )
-            }
+
 
             Divider(
                 modifier = Modifier.fillMaxWidth(),
