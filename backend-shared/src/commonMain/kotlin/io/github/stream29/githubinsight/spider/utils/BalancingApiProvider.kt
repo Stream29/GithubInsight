@@ -1,4 +1,6 @@
-package io.github.stream29.githubinsight.spider
+package io.github.stream29.githubinsight.spider.utils
+
+import io.github.stream29.githubinsight.spider.Exception.FetchException
 
 data class BalancingApiProvider(
     val apiProviders: List<GithubApiProvider>,

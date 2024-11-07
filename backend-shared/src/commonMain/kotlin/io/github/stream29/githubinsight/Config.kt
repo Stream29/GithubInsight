@@ -1,5 +1,7 @@
 package io.github.stream29.githubinsight
 
+import io.github.stream29.githubinsight.spider.utils.BalancingApiProvider
+import io.github.stream29.githubinsight.spider.utils.GithubApiProvider
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import io.github.stream29.githubinsight.spider.BalancingApiProvider
 import io.github.stream29.githubinsight.spider.GithubApiProvider
