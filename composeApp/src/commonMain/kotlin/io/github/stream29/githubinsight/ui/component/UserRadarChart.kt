@@ -3,6 +3,7 @@ package io.github.koalaplot.sample.polar
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
@@ -25,12 +26,12 @@ import io.github.stream29.githubinsight.ui.component.sample.paddingMod
 @OptIn(ExperimentalKoalaPlotApi::class)
 @Composable
 @Suppress("MagicNumber")
-fun UserRadarChart(thumbnail: Boolean, title: String, talentRank: ContributionVector) {
+fun UserRadarChart(thumbnail: Boolean, talentRank: ContributionVector, modifier: Modifier = Modifier) {
     val map = talentRank.contributionMap.toList().sortedBy { it.second.second }.reversed().toMap()
     val keys = map.keys.toList().take(10)
     val values = map.values.map { it.second.toFloat() }.toList().take(10)
     ChartLayout(
-        modifier = paddingMod,
+        modifier = modifier,
         legendLocation = LegendLocation.BOTTOM
     ) {
         val ram = rememberFloatRadialAxisModel(
