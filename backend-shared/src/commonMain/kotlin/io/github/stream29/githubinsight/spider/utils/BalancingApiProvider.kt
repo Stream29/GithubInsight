@@ -11,12 +11,16 @@ data class BalancingApiProvider(
         try {
             val apiProvider = apiProviders[currentApiProviderIndex]
             val result = apiCall(apiProvider)
-            currentFailSum = 0
-            currentApiProviderIndex = (currentApiProviderIndex + 1) % apiProviders.size
+            synchronized(this) {
+                currentFailSum = 0
+                currentApiProviderIndex = (currentApiProviderIndex + 1) % apiProviders.size
+            }
             return result
         } catch (e: Exception) {
-            currentFailSum++
-            currentApiProviderIndex = (currentApiProviderIndex + 1) % apiProviders.size
+            synchronized(this) {
+                currentFailSum++
+                currentApiProviderIndex = (currentApiProviderIndex + 1) % apiProviders.size
+            }
             if (currentFailSum == apiProviders.size) {
                 throw FetchException("All Api Providers failed.", e)
             }
