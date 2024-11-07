@@ -14,6 +14,6 @@ data class RemoteBackendApiProvider(
     val baseUrl: String
 ) : BackendApiProvider {
     override suspend fun getUser(login: String): ClientEntities {
-        return httpClient.get("$baseUrl/users/$login").body()
+        return httpClient.get("$baseUrl/user/$login").body()
     }
 }

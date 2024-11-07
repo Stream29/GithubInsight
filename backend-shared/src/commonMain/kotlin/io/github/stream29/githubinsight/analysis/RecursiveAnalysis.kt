@@ -40,11 +40,11 @@ suspend fun Analyser.analyseUser(userLogin: String): UserResult = coroutineScope
     result
 }
 
-suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector<String> = coroutineScope {
+suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector = coroutineScope {
     val repositories = userInfo.repos.map {
         async { analyseRepo(it) }
     }.awaitAll()
-    ContributionVector(mapOf("Java" to "很强"))
+    ContributionVector(mapOf("Java" to ("很强" to 1)))
 }
 
 suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
