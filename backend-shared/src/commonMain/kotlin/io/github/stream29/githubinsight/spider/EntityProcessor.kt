@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight.spider
 
+import io.github.stream29.githubinsight.common.entities.Organization
 import io.github.stream29.githubinsight.common.entities.Repository
 import io.github.stream29.githubinsight.common.entities.UserCommit
 import io.github.stream29.githubinsight.common.entities.UserInfo
@@ -29,19 +30,6 @@ class EntityProcessor {
                 .asSequence()
                 .map { it.login }
                 .toList()
-        }
-
-        fun toEvents(eventsResponse: List<EventResponse>): List<Event> {
-            return eventsResponse
-                .asSequence()
-                .map {
-                    Event(
-                        it.id,
-                        it.type,
-                        it.actor.login,
-                        it.repo.fullName,
-                    )
-                }.toList()
         }
 
         private fun toRepositoriesFullName(repositoriesResponse: List<RepositoryResponse>): List<String> {
@@ -89,11 +77,11 @@ class EntityProcessor {
         fun toOrganization(organizationResponse: OrganizationResponse,
                            members: List<UserResponse>): Organization {
             return Organization(
-                organizationResponse.id,
                 organizationResponse.login,
                 members.asSequence()
                     .map { it.login }
-                    .toList()
+                    .toList(),
+                organizationResponse.description,
             )
         }
 
@@ -109,76 +97,6 @@ class EntityProcessor {
                     UserCommit(
                         author = it.author?.login ?: "",
                         message = it.message ?: "",
-                    )
-                }.toList()
-        }
-
-        fun toReleases(releasesResponse: List<ReleaseResponse>): List<Release> {
-            return releasesResponse
-                .asSequence()
-                .map {
-                    Release(
-                        it.id,
-                        it.author.login,
-                        it.name,
-                        it.prerelease,
-                        it.createdAt,
-                        it.publishedAt,
-                        toAssets(it.assets),
-                        it.body,
-                    )
-                }.toList()
-        }
-
-        private fun toAssets(assetsResponse: List<AssetResponse>): List<Asset> {
-            return assetsResponse
-                .asSequence()
-                .map {
-                    Asset(
-                        it.id,
-                        it.uploader.login,
-                        it.state,
-                        it.size,
-                        it.downloadCount,
-                        it.createdAt,
-                        it.updatedAt,
-                    )
-                }.toList()
-        }
-
-        fun toCommits(commitsResponse: List<CommitResponse>): List<Commit> {
-            return commitsResponse
-                .asSequence()
-                .map {
-                    Commit(
-                        it.sha,
-                        it.message,
-                        it.author?.login,
-                        it.committer?.login,
-                    )
-                }.toList()
-        }
-
-        fun toIssues(issuesResponse: List<IssueResponse>): List<Issue> {
-            return issuesResponse
-                .asSequence()
-                .map {
-                    Issue(
-                        it.id,
-                        it.title,
-                        it.user.login,
-                    )
-                }.toList()
-        }
-
-        fun toIssueEvents(issueEventsResponse: List<IssueEventResponse>): List<IssueEvent> {
-            return issueEventsResponse
-                .asSequence()
-                .map {
-                    IssueEvent(
-                        it.id,
-                        it.actor.login,
-                        it.event,
                     )
                 }.toList()
         }

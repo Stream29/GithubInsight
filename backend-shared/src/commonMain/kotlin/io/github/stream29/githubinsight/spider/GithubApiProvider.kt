@@ -99,6 +99,14 @@ suspend fun GithubApiProvider.fetchOrganizations(orgsUrl: String): List<Organiza
     return decodeFromString<List<OrganizationResponse>>(json)
 }
 
+suspend fun GithubApiProvider.fetchOrganization(login: String): OrganizationResponse {
+    val orgUrl = "$orgUrl/$login"
+    val json = persistence(orgUrl) {
+        fetch(orgUrl)
+    }
+    return decodeFromString<OrganizationResponse>(json)
+}
+
 suspend fun GithubApiProvider.fetchOrgMembers(membersUrl: String): List<UserResponse> {
     val json = persistence(membersUrl) {
         fetch(membersUrl.replace("{/member}", ""))

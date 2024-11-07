@@ -247,6 +247,7 @@ data class OrganizationResponse(
     val login: String,
     @SerialName("members_url")
     val membersUrl: String,
+    val description: String? = null,
 )
 
 @Serializable

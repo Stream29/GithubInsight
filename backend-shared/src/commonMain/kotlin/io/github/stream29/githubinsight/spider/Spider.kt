@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight.spider
 
+import io.github.stream29.githubinsight.common.entities.Organization
 import io.github.stream29.githubinsight.common.entities.Repository
 import io.github.stream29.githubinsight.common.entities.UserInfo
 import kotlinx.coroutines.async
@@ -7,24 +8,13 @@ import kotlinx.coroutines.coroutineScope
 
 
 class Spider (
-    val balancingApiProvider: BalancingApiProvider
+    private val balancingApiProvider: BalancingApiProvider
 ) {
     suspend fun getUserInfo(login: String): UserInfo {
         val responseCollection = balancingApiProvider.execute { a ->
             a.fetchBase(login)
         }
         return EntityProcessor.toUserInfo(responseCollection)
-    }
-
-    // get more info: events
-    suspend fun getUserEvents(login: String): List<Event> {
-        val userResponse = balancingApiProvider.execute { a ->
-            a.fetchUser(login)
-        }
-        val eventsResponse = balancingApiProvider.execute { a ->
-            a.fetchEvents(userResponse.eventsUrl)
-        }
-        return EntityProcessor.toEvents(eventsResponse)
     }
 
     // get a repository all information
@@ -48,6 +38,16 @@ class Spider (
             commits.await(),
             tags.await(),
             readme.await(),
+        )
+    }
+
+    // get organization information
+    suspend fun getOrganization(login: String): Organization = coroutineScope {
+        val organizationResponse = balancingApiProvider.execute { a -> a.fetchOrganization(login) }
+        val organizationMembers = balancingApiProvider.execute { a -> a.fetchOrgMembers(organizationResponse.membersUrl) }
+        EntityProcessor.toOrganization(
+            organizationResponse,
+            organizationMembers,
         )
     }
 }
