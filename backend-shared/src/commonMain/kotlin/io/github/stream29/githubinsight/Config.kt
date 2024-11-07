@@ -5,6 +5,7 @@ import io.github.stream29.githubinsight.spider.Spider
 import io.github.stream29.githubinsight.spider.utils.BalancingApiProvider
 import io.github.stream29.githubinsight.spider.utils.GithubApiProvider
 import io.github.stream29.langchain4kt.api.baiduqianfan.QianfanApiProvider
+import io.github.stream29.langchain4kt.api.baiduqianfan.QianfanGenerationConfig
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiApiProvider
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiGenerationConfig
 import io.github.stream29.langchain4kt.core.ChatApiProvider
@@ -55,7 +56,7 @@ data class BaiduQianfanAuthConfig(
     val model: String
 ) : ChatApiConfig {
     override fun getApiProvider() =
-        QianfanApiProvider(httpClient, model, apiKey, secretKey)
+        QianfanApiProvider(httpClient, model, apiKey, secretKey, QianfanGenerationConfig(temperature = 0.5f))
 }
 
 @Serializable
@@ -66,7 +67,7 @@ data class GoogleGeminiConfig(
     val model: String
 ) : ChatApiConfig {
     override fun getApiProvider() =
-        GeminiApiProvider(httpClient, GeminiGenerationConfig(), model, apiKey)
+        GeminiApiProvider(httpClient, GeminiGenerationConfig(temperature = 0.5), model, apiKey)
 }
 
 fun List<ChatApiConfig>.toSwitchOnFailApiProvider() =

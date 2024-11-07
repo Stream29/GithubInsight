@@ -11,6 +11,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import java.util.*
 
 data class Analyser(
     val database: MongoDatabase,
@@ -56,7 +57,7 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
         val info = relevantRepos.joinToString("\n") {
             val percentage = (it.contributeMap[userInfo.login]!! * 100.toDouble() / it.contributionTotal).formatted()
             """
-                在${it.name}项目（star数为${it.contributeMap}），${it.techValue[tech]}，贡献度为$percentage%。
+                在${it.name}项目（star数为${it.starsCount}），${it.techValue[tech]}，贡献度为$percentage%。
             """.trimIndent()
         }
         val evaluation = respondent.chat(
@@ -74,7 +75,7 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
             以上为一个github用户在${tech}方面的仓库贡献履历。请问他在这方面技术水平如何？
         """.trimIndent()
         )
-        val score = withRetry(10) {
+        val score = withRetry(3) {
             respondent.chat(
                 """
                     =====以下为问答示例=====
@@ -91,7 +92,7 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
                     以上是对一个github用户在${tech}方面的技术水平的评价。
                     请问这个用户在${tech}方面的技术水平可以打多少分？标准为：会使用-20分；熟练使用-40分；开源贡献很多-60分；开源贡献影响力大-80分；顶级开源开发者-100分
                 """.trimIndent()
-            ).toInt()
+            ).parseInt()
         }
         evaluation to score
     }
@@ -105,19 +106,22 @@ suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
     val repoInfo = githubSpider.getRepository(repo)
     val contributors = repoInfo.contributors
 
+    val readme = repoInfo.readme
     val result =
-        if (repoInfo.readme != null) RepoResult(
+        if (readme != null && readme.length > 10) RepoResult(
             name = repo,
-            techValue = analyseTechValue(repoInfo, repoInfo.readme!!),
+            techValue = analyseTechValue(repoInfo, readme),
             contributeMap = contributors.associateWith { contributor ->
                 repoInfo.commits.count { it.author == contributor }
             },
-            contributionTotal = repoInfo.commits.size
+            contributionTotal = repoInfo.commits.size,
+            starsCount = repoInfo.starsCount
         )
         else RepoResult(
             name = repo,
             techValue = emptyMap(),
             contributeMap = emptyMap(),
+            0,
             0
         )
     launch {
@@ -208,7 +212,7 @@ suspend fun Analyser.inferNationFrom(info: String): Estimated<String> = coroutin
         """.trimIndent()
         )
     val belief =
-        withRetry(10) {
+        withRetry(3) {
             respondent.chat(
                 """
                     =====以下为问答示例=====
@@ -221,10 +225,16 @@ suspend fun Analyser.inferNationFrom(info: String): Estimated<String> = coroutin
                     回答的内容应当是一个0到100之间的整数，表示你对这个推断的置信度。不准输出其他内容。
                     从信息“${info}”推断所在国家为${nationInferred}的置信度是多少？
                 """.trimIndent()
-            ).toInt()
+            ).parseInt()
         }
     Estimated(belief, nationInferred)
 }
+
+fun String.parseInt(): Int =
+    Scanner(this).use {
+        it.nextInt()
+    }
+
 
 fun Double.formatted(): String = String.format("%.2f", this)
 
