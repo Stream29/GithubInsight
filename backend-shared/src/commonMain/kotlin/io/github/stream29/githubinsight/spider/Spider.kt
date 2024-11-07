@@ -33,9 +33,12 @@ class Spider(
     }
 
     // get a repository all information
-    suspend fun getRepository(repoFullName: String): Repository = coroutineScope {
+    suspend fun getRepository(repoFullName: String): Repository? = coroutineScope {
         val repositoryResponse = balancingApiProvider.execute { a ->
             a.fetchRepository("$RepoUrl/$repoFullName")
+        }
+        if (repositoryResponse == null) {
+            return@coroutineScope null
         }
         val contributors =
             async { balancingApiProvider.execute { a -> a.fetchContributors(repositoryResponse.contributorsUrl) } }
@@ -61,8 +64,11 @@ class Spider(
     }
 
     // get organization information
-    suspend fun getOrganization(login: String): Organization = coroutineScope {
+    suspend fun getOrganization(login: String): Organization? = coroutineScope {
         val organizationResponse = balancingApiProvider.execute { a -> a.fetchOrganization(login) }
+        if (organizationResponse == null) {
+            return@coroutineScope null
+        }
         val organizationMembers =
             balancingApiProvider.execute { a -> a.fetchOrgMembers(organizationResponse.membersUrl) }
         EntityProcessor.toOrganization(
