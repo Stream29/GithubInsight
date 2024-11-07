@@ -39,4 +39,4 @@ var user: ClientEntities? = ClientEntities(
 )
 var userList: List<ClientEntities>? = listOf(user!!)
 
-fun UserEntities(userLogin: String) = runBlocking { backendApiProvider.getUser(userLogin) }
+fun UserEntities(userLogin: String) = runBlocking { backendApiProvider!!.getUser(userLogin) }

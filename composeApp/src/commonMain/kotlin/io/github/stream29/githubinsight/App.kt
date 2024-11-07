@@ -15,14 +15,14 @@ import io.github.stream29.githubinsight.ui.page.UserDetail
 fun App() {
     var pageState by remember { mutableStateOf(-1) }
     val globalUserLogin = remember { mutableStateOf("") }
-    val globalBaseUtl = remember { mutableStateOf("") }
+    val globalBaseUrl = remember { mutableStateOf("") }
     MaterialTheme {
         when (pageState) {
-            -1 -> InputServerUrl({ pageState = 0 }, globalBaseUtl)
+            -1 -> InputServerUrl({ pageState = 0 }, globalBaseUrl)
             0 -> InputUserLogin({ pageState = 1 }, globalUserLogin)
-            1 -> UserDetail({ pageState = 2 }, globalUserLogin)
+            1 -> UserDetail({ pageState = 2 }, globalUserLogin, globalBaseUrl.value)
             2 -> AllUsers({ pageState = 3 }, globalUserLogin)
-            3 -> UserDetail({ pageState = 2 }, globalUserLogin)
+            3 -> UserDetail({ pageState = 2 }, globalUserLogin, globalBaseUrl.value)
         }
     }
 }

@@ -27,11 +27,19 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.github.koalaplot.sample.polar.UserRadarChart
 import io.github.stream29.githubinsight.UserEntities
+import io.github.stream29.githubinsight.backendApiProvider
+import io.github.stream29.githubinsight.common.RemoteBackendApiProvider
+import io.github.stream29.githubinsight.httpClient
 import io.github.stream29.githubinsight.user
 
 @Composable
-fun UserDetail(onStateChange: () -> Unit, userLogin: MutableState<String>) {
-//    user = UserEntities(userLogin.value)
+fun UserDetail(
+    onStateChange: () -> Unit,
+    userLogin: MutableState<String>,
+    globalUrl: String
+) {
+    backendApiProvider = RemoteBackendApiProvider(httpClient = httpClient, baseUrl = globalUrl)
+    user = UserEntities(userLogin.value)
     val user = user!!
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
