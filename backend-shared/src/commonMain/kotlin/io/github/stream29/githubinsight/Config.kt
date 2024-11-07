@@ -1,5 +1,6 @@
 package io.github.stream29.githubinsight
 
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import io.github.stream29.githubinsight.spider.BalancingApiProvider
 import io.github.stream29.githubinsight.spider.GithubApiProvider
 import io.github.stream29.githubinsight.spider.Spider
@@ -33,11 +34,11 @@ data class GithubAuthConfig(
     val token: String
 )
 
-fun GithubAuthConfig.toGithubApiProvider() =
-    GithubApiProvider(token)
+fun GithubAuthConfig.toGithubApiProvider(database: MongoDatabase) =
+    GithubApiProvider(token, database)
 
-fun List<GithubAuthConfig>.toSpider() =
-    Spider(BalancingApiProvider(this.map { it.toGithubApiProvider() }))
+fun BackendConfig.toSpider(database: MongoDatabase) =
+    Spider(BalancingApiProvider(githubApi.map { it.toGithubApiProvider(database) }))
 
 @Serializable
 sealed interface ChatApiConfig {
