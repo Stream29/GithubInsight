@@ -51,8 +51,9 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
     val techValue = techSet.associateWith { tech ->
         val relevantRepos = repositories.asSequence().filter { it.techValue.containsKey(tech) }
         val info = relevantRepos.joinToString("\n") {
+            val percentage = (it.contributeMap[userInfo.login]!! * 100.toDouble() / it.contributionTotal).formatted()
             """
-                在${it.name}项目（star数为${it.contributeMap}），${it.techValue[tech]}，贡献度为${it.contributeMap[userInfo.login]!! * 100.toDouble() / it.contributionTotal}%。
+                在${it.name}项目（star数为${it.contributeMap}），${it.techValue[tech]}，贡献度为$percentage%。
             """.trimIndent()
         }
         val evaluation = respondent.chat(
@@ -129,7 +130,7 @@ suspend fun Analyser.analyseTechValue(repoInfo: Repository, readme: String): Map
     val topics = repoInfo.topics
 
     val languageValue = languages.map { (language, count) ->
-        val percentage = count.toDouble() * 100 / languageSum
+        val percentage = (count.toDouble() * 100 / languageSum).formatted()
         async {
             language to respondent.chat(
                 """
@@ -221,6 +222,8 @@ suspend fun Analyser.inferNationFrom(info: String): Estimated<String> = coroutin
         }
     Estimated(belief, nationInferred)
 }
+
+fun Double.formatted(): String = String.format("%.2f", this)
 
 suspend fun <T> withRetry(count: Int, block: suspend () -> T): T {
     var currentCount = 0
