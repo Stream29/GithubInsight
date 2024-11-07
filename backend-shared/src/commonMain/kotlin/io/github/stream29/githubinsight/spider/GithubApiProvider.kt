@@ -63,7 +63,7 @@ suspend fun GithubApiProvider.fetchUser(login: String): UserResponse {
     userResponseCollection.find(eq("login", login))
         .firstOrNull()
         ?.let { return it }
-    val userJson = fetch("$baseUserUrl/$login")
+    val userJson = fetch("$UserUrl/$login")
     val user = decodeFromString<UserResponse>(userJson)
     userResponseCollection.insertOne(user)
     return user
@@ -238,7 +238,6 @@ suspend fun GithubApiProvider.fetchLanguages(languagesUrl: String): Map<String, 
 }
 
 const val baseUrl = "https://api.github.com"
-const val baseUserUrl = "$baseUrl/users"
-const val baseRepoUrl = "$baseUrl/repos"
+const val UserUrl = "$baseUrl/users"
+const val RepoUrl = "$baseUrl/repos"
 const val orgUrl = "$baseUrl/orgs"
-const val limitedReposCount = 20

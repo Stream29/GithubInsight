@@ -20,7 +20,7 @@ class Spider (
     // get a repository all information
     suspend fun getRepository(repoFullName: String): Repository = coroutineScope {
         val repositoryResponse = balancingApiProvider.execute { a ->
-            a.fetchRepository("$baseRepoUrl/$repoFullName")
+            a.fetchRepository("$RepoUrl/$repoFullName")
         }
         val contributors = async { balancingApiProvider.execute { a -> a.fetchContributors(repositoryResponse.contributorsUrl) } }
         val languages = async { balancingApiProvider.execute { a -> a.fetchLanguages(repositoryResponse.languagesUrl) } }
