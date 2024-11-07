@@ -16,9 +16,9 @@ class AppTest {
             .readText()
             .let { BackendConfig.fromYamlString(it) }
         val chatApiProvider = backendConfig.chatApi.toSwitchOnFailApiProvider()
-        val githubApiProvider = backendConfig.githubApi.toSpider()
         val mongoClient = backendConfig.mongodb.connectionString.let { MongoClient.create(it) }
         val mongoDatabase = mongoClient.getDatabase("github_insight")
+        val githubApiProvider = backendConfig.toSpider(mongoDatabase)
         val analyser = Analyser(mongoDatabase, chatApiProvider, githubApiProvider)
         runBlocking {
             println(analyser.analyseUser("ConstasJ"))

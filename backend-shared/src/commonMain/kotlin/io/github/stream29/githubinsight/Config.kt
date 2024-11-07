@@ -1,11 +1,9 @@
 package io.github.stream29.githubinsight
 
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import io.github.stream29.githubinsight.spider.Spider
 import io.github.stream29.githubinsight.spider.utils.BalancingApiProvider
 import io.github.stream29.githubinsight.spider.utils.GithubApiProvider
-import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import io.github.stream29.githubinsight.spider.BalancingApiProvider
-import io.github.stream29.githubinsight.spider.GithubApiProvider
-import io.github.stream29.githubinsight.spider.Spider
 import io.github.stream29.langchain4kt.api.baiduqianfan.QianfanApiProvider
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiApiProvider
 import io.github.stream29.langchain4kt.api.googlegemini.GeminiGenerationConfig
