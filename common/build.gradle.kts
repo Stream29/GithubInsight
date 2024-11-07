@@ -6,4 +6,6 @@ plugins {
 
 dependencies {
     api(libs.kotlinx.serialization.core)
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.client.java)
 }

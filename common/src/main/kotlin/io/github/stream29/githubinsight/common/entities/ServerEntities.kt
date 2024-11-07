@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserResult(
     val login: String,
-    val talentRank: ContributionVector<String>,
+    val talentRank: ContributionVector,
     val nation: Estimated<String>
 )
 
@@ -73,6 +73,6 @@ data class Estimated<T>(
 )
 
 @Serializable
-data class ContributionVector<T>(
-    val contributionMap: Map<String, T>
+data class ContributionVector(
+    val contributionMap: Map<String, Pair<String,Int>>
 )
