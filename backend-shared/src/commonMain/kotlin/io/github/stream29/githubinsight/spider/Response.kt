@@ -9,7 +9,6 @@ data class ResponseCollection(
     val orgsResponse: List<OrganizationResponse>,
     val reposResponse: List<RepositoryResponse>,
     val subscriptionsResponse: List<RepositoryResponse>,
-    val starredresponse: List<RepositoryResponse>,
     val followersResponse: List<UserResponse>,
     val followingResponse: List<UserResponse>,
 )

@@ -4,10 +4,12 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import io.github.stream29.githubinsight.httpClient
 import io.github.stream29.githubinsight.spider.*
+import io.github.stream29.githubinsight.spider.Exception.FetchException
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
 class GithubApiProvider(
@@ -41,9 +43,13 @@ suspend fun GithubApiProvider.fetchUser(login: String): UserResponse {
         .firstOrNull()
         ?.let { return it }
     val userJson = fetch("$UserUrl/$login")
-    val user = decodeFromString<UserResponse>(userJson)
-    userResponseCollection.insertOne(user)
-    return user
+    try {
+        val user = decodeFromString<UserResponse>(userJson)
+        userResponseCollection.insertOne(user)
+        return user
+    } catch (e: SerializationException) {
+        throw FetchException("fetch user failed.", e)
+    }
 }
 
 suspend fun GithubApiProvider.persistence(jsonUrl: String, blocks: suspend () -> String): String {
@@ -56,24 +62,36 @@ suspend fun GithubApiProvider.persistence(jsonUrl: String, blocks: suspend () ->
 }
 
 suspend fun GithubApiProvider.fetchUsers(usersUrl: String): List<UserResponse> {
-    val json = persistence(usersUrl) {
-        fetch(usersUrl.replace("{/other_user}", ""))
+    val jsons = fetchAnyPages(usersUrl.replace("{/other_user}", ""), 1, -1)
+    val mergedJson = mergeJsons(jsons)
+    return try {
+        decodeFromString<List<UserResponse>>(mergedJson)
+    } catch (e: SerializationException) {
+        decodeFromString<List<UserResponse>>("[]")
     }
-    return decodeFromString<List<UserResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchEvents(eventsUrl: String): List<EventResponse> {
-    val json = persistence(eventsUrl) {
-        fetch(eventsUrl.replace("{/privacy}", ""))
+    val newUrl = eventsUrl.replace("{/privacy}", "")
+    val json = persistence(newUrl) {
+        fetch(newUrl)
     }
-    return decodeFromString<List<EventResponse>>(json)
+    return try {
+        decodeFromString<List<EventResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<EventResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchOrganizations(orgsUrl: String): List<OrganizationResponse> {
     val json = persistence(orgsUrl) {
         fetch(orgsUrl)
     }
-    return decodeFromString<List<OrganizationResponse>>(json)
+    return try {
+        decodeFromString<List<OrganizationResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<OrganizationResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchOrganization(login: String): OrganizationResponse {
@@ -81,7 +99,11 @@ suspend fun GithubApiProvider.fetchOrganization(login: String): OrganizationResp
     val json = persistence(orgUrl) {
         fetch(orgUrl)
     }
-    return decodeFromString<OrganizationResponse>(json)
+    try {
+        return decodeFromString<OrganizationResponse>(json)
+    } catch (e: SerializationException) {
+        throw FetchException("fetch organization failed.", e)
+    }
 }
 
 suspend fun GithubApiProvider.fetchAnyPages(baseUrl: String, start: Int, pages: Int): List<String> {
@@ -92,7 +114,7 @@ suspend fun GithubApiProvider.fetchAnyPages(baseUrl: String, start: Int, pages: 
         val json = persistence(pageUrl) {
             fetch(pageUrl)
         }
-        if (json == "[]") {
+        if (json == "[]" || (page >= maxPages)) {
             break
         }
         page++
@@ -111,52 +133,73 @@ fun mergeJsons(jsons: List<String>): String {
 suspend fun GithubApiProvider.fetchOrgMembers(membersUrl: String): List<UserResponse> {
     val jsons = fetchAnyPages(membersUrl.replace("{/member}", ""), 1, -1)
     val mergedJson = mergeJsons(jsons)
-    return decodeFromString<List<UserResponse>>(mergedJson)
+    return try {
+        decodeFromString<List<UserResponse>>(mergedJson)
+    } catch (e: SerializationException) {
+        decodeFromString<List<UserResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchRepositories(reposUrl: String): List<RepositoryResponse> {
-    val json = persistence(reposUrl) {
-        fetch(reposUrl)
+    val jsons = fetchAnyPages(reposUrl, 1, -1)
+    val mergedJson = mergeJsons(jsons)
+    return try {
+        decodeFromString<List<RepositoryResponse>>(mergedJson)
+    } catch (e: SerializationException) {
+        decodeFromString<List<RepositoryResponse>>("[]")
     }
-    return decodeFromString<List<RepositoryResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchRepository(repoUrl: String): RepositoryResponse {
     val json = persistence(repoUrl) {
         fetch(repoUrl)
     }
-    return decodeFromString<RepositoryResponse>(json)
+    try {
+        return decodeFromString<RepositoryResponse>(json)
+    } catch (e: SerializationException) {
+        throw FetchException("fetch repository failed.", e)
+    }
+}
+
+suspend fun GithubApiProvider.fetchUserResponse(url: String): List<UserResponse> {
+    val json = persistence(url) {
+        fetch(url)
+    }
+    return try {
+        decodeFromString<List<UserResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<UserResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchCollaborators(collaboratorsUrl: String): List<UserResponse> {
-    val json = persistence(collaboratorsUrl) {
-        fetch(collaboratorsUrl).replace("{/collaborator}", "")
-    }
-    if (json.contains("Not Found")) {
-        return decodeFromString<List<UserResponse>>("[]")
-    }
-    return decodeFromString<List<UserResponse>>(json)
+    val newUrl = collaboratorsUrl.replace("{/collaborator}", "")
+    return fetchUserResponse(newUrl)
 }
 
 suspend fun GithubApiProvider.fetchSubscribers(subscribersUrl: String): List<UserResponse> {
-    val json = persistence(subscribersUrl) {
-        fetch(subscribersUrl)
+    val jsons = fetchAnyPages(subscribersUrl, 1, -1)
+    val mergedJson = mergeJsons(jsons)
+    return try {
+        decodeFromString<List<UserResponse>>(mergedJson)
+    } catch (e: SerializationException) {
+        decodeFromString<List<UserResponse>>("[]")
     }
-    return decodeFromString<List<UserResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchSubscriptions(subscriptionsUrl: String): List<RepositoryResponse> {
-    val json = persistence(subscriptionsUrl) {
-        fetch(subscriptionsUrl)
-    }
-    return decodeFromString<List<RepositoryResponse>>(json)
+    return fetchRepositories(subscriptionsUrl)
 }
 
 suspend fun GithubApiProvider.fetchTags(tagsUrl: String): List<TagResponse> {
     val json = persistence(tagsUrl) {
         fetch(tagsUrl)
     }
-    return decodeFromString<List<TagResponse>>(json)
+    return try {
+        decodeFromString<List<TagResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<TagResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchReadme(repoUrl: String): Readme? {
@@ -164,83 +207,85 @@ suspend fun GithubApiProvider.fetchReadme(repoUrl: String): Readme? {
     val json = persistence(readmeUrl) {
         fetch(readmeUrl)
     }
-    if (json.contains("This repository is empty")) {
+    try {
+        return decodeFromString<Readme>(json)
+    } catch (e: SerializationException) {
         return null
     }
-    return decodeFromString<Readme>(json)
-}
-
-suspend fun GithubApiProvider.fetchStarred(starredUrl: String): List<RepositoryResponse> {
-    val json = persistence(starredUrl) {
-        fetch(
-            starredUrl
-                .replace("{/owner}", "")
-                .replace("{/repo}", "")
-        )
-    }
-    return decodeFromString<List<RepositoryResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchReleases(releaseUrl: String): List<ReleaseResponse> {
-    val json = persistence(releaseUrl) {
-        fetch(releaseUrl.replace("{/id}", ""))
+    val newUrl = releaseUrl.replace("{/id}", "")
+    val json = persistence(newUrl) {
+        fetch(newUrl)
     }
-    return decodeFromString<List<ReleaseResponse>>(json)
+    return try {
+        decodeFromString<List<ReleaseResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<ReleaseResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchCommits(commitsUrl: String): List<CommitResponse> {
-    val json = persistence(commitsUrl) {
-        fetch(commitsUrl.replace("{/sha}", ""))
+    val newUrl = commitsUrl.replace("{/sha}", "")
+    val json = persistence(newUrl) {
+        fetch(newUrl)
     }
-    if (json.contains("Git Repository is empty")) {
-        return decodeFromString<List<CommitResponse>>("[]")
+    return try {
+        decodeFromString<List<CommitResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<CommitResponse>>("[]")
     }
-    return decodeFromString<List<CommitResponse>>(json)
 }
 
 suspend fun GithubApiProvider.fetchIssues(issuesUrl: String): List<IssueResponse> {
-    val json = persistence(issuesUrl) {
-        fetch(issuesUrl.replace("{/number}", ""))
+    val newUrl = issuesUrl.replace("{/number}", "")
+    val json = persistence(newUrl) {
+        fetch(newUrl)
     }
-    return decodeFromString<List<IssueResponse>>(json)
+    return try {
+        decodeFromString<List<IssueResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<IssueResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchIssueEvents(issueEventsUrl: String): List<IssueEventResponse> {
-    val json = persistence(issueEventsUrl) {
-        fetch(issueEventsUrl.replace("{/number}", ""))
+    val newUrl = issueEventsUrl.replace("{/number}", "")
+    val json = persistence(newUrl) {
+        fetch(newUrl)
     }
-    return decodeFromString<List<IssueEventResponse>>(json)
+    return try {
+        decodeFromString<List<IssueEventResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<IssueEventResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchForks(forksUrl: String): List<RepositoryResponse> {
     val json = persistence(forksUrl) {
         fetch(forksUrl)
     }
-    return decodeFromString<List<RepositoryResponse>>(json)
+    return try {
+        decodeFromString<List<RepositoryResponse>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<List<RepositoryResponse>>("[]")
+    }
 }
 
 suspend fun GithubApiProvider.fetchContributors(contributorsUrl: String): List<UserResponse> {
-    val json = persistence(contributorsUrl) {
-        fetch(contributorsUrl)
-    }
-    if (json.trim().isBlank()) {
-        return decodeFromString<List<UserResponse>>("[]")
-    }
-    return decodeFromString<List<UserResponse>>(json)
-}
-
-suspend fun GithubApiProvider.fetchStargazers(stargazersUrl: String): List<UserResponse> {
-    val json = persistence(stargazersUrl) {
-        fetch(stargazersUrl)
-    }
-    return decodeFromString<List<UserResponse>>(json)
+    return fetchUserResponse(contributorsUrl)
 }
 
 suspend fun GithubApiProvider.fetchLanguages(languagesUrl: String): Map<String, Int> {
     val json = persistence(languagesUrl) {
         fetch(languagesUrl)
     }
-    return decodeFromString<Map<String, Int>>(json)
+    return try {
+        decodeFromString<Map<String, Int>>(json)
+    } catch (e: SerializationException) {
+        decodeFromString<Map<String, Int>>("{}")
+    }
 }
 
 const val baseUrl = "https://api.github.com"
@@ -248,3 +293,4 @@ const val UserUrl = "$baseUrl/users"
 const val RepoUrl = "$baseUrl/repos"
 const val orgUrl = "$baseUrl/orgs"
 const val perPage = 100
+const val maxPages = 100

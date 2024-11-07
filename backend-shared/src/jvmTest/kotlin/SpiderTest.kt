@@ -38,7 +38,7 @@ class SpiderTest {
 
         runBlocking {
             println(json.encodeToString(UserInfo.serializer(), spider.getUserInfo("Moistrocic")))
-            println(json.encodeToString(Repository.serializer(), spider.getRepository("Moistrocic/empty-test")))
+            println(json.encodeToString(Repository.serializer(), spider.getRepository("ChrisRM/material-theme-jetbrains")))
             println(json.encodeToString(Organization.serializer(), spider.getOrganization("JetBrains")))
         }
     }

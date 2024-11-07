@@ -15,7 +15,6 @@ class Spider (
         val organizationsResponse = balancingApiProvider.execute { a -> a.fetchOrganizations(userResponse.organizationsUrl) }
         val reposResponse = balancingApiProvider.execute { a -> a.fetchRepositories(userResponse.reposUrl) }
         val subscriptionsResponse = balancingApiProvider.execute { a -> a.fetchSubscriptions(userResponse.subscriptionsUrl) }
-        val starredResponse = balancingApiProvider.execute { a -> a.fetchStarred(userResponse.starredUrl) }
         val followersResponse = balancingApiProvider.execute { a -> a.fetchUsers(userResponse.followersUrl) }
         val followingResponse = balancingApiProvider.execute { a -> a.fetchUsers(userResponse.followingUrl) }
         return EntityProcessor.toUserInfo(
@@ -24,7 +23,6 @@ class Spider (
                 orgsResponse = organizationsResponse,
                 reposResponse = reposResponse,
                 subscriptionsResponse = subscriptionsResponse,
-                starredresponse = starredResponse,
                 followersResponse = followersResponse,
                 followingResponse = followingResponse,
             )
