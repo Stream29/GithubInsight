@@ -10,7 +10,7 @@ val entityMapExample = mapOf("stream" to Entity(
     userInfo = UserInfo(
         login = "stream",
         name = "stream",
-        avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4",
+        avatarUrl = "https://avatars.githubusercontent.com/u/36751053?v=4",
         bio = "I am stream, a developer",
         email = "email",
         organizations = listOf("org1", "org2"),
@@ -27,8 +27,8 @@ val entityMapExample = mapOf("stream" to Entity(
     ),
     userResult = UserResult(
         login = "stream",
-        talentRank = ContributionVector(mapOf("key" to "value")),
+        talentRank = ContributionVector(mapOf("Kotlin" to "Good", "Java" to "Good", "Python" to "Good", "JavaScript" to "Good")),
         nation = Estimated(100, "China")
     ),
-    talentRank = ContributionVector(mapOf("key" to 1))
+    talentRank = ContributionVector(mapOf("Kotlin" to 100, "Java" to 100, "Python" to 80, "JavaScript" to 40, "C++" to 90))
 ))
