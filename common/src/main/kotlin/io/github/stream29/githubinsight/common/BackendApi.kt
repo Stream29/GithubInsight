@@ -7,6 +7,7 @@ import io.ktor.client.request.*
 
 interface BackendApiProvider {
     suspend fun getUser(login: String): ClientEntities
+    suspend fun allUser(begin: Int, end: Int): List<ClientEntities>
 }
 
 data class RemoteBackendApiProvider(
@@ -15,5 +16,9 @@ data class RemoteBackendApiProvider(
 ) : BackendApiProvider {
     override suspend fun getUser(login: String): ClientEntities {
         return httpClient.get("$baseUrl/user/$login").body()
+    }
+
+    override suspend fun allUser(begin: Int, end: Int): List<ClientEntities> {
+        return httpClient.get("$baseUrl/users?begin=$begin&end=$end").body()
     }
 }

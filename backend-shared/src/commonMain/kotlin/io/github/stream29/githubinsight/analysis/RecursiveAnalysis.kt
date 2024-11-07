@@ -32,7 +32,7 @@ suspend fun Analyser.analyseUser(userLogin: String): UserResult = coroutineScope
     val talentRank = async { analyseTalentRank(userInfo) }
     val result = UserResult(
         login = userLogin,
-        talentRank = talentRank.await(),
+        talentRank = talentRank.await() ?: ContributionVector(emptyMap()),
         nation = nation.await()
     )
     launch {
@@ -45,26 +45,27 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
     val repositories = userInfo.repos.map {
         async { analyseRepo(it) }
     }.awaitAll()
-    val techSet = repositories.asSequence().map { it.techValue }.fold(mutableSetOf<String>()) { acc, map ->
-        acc.addAll(map.keys); acc
-    }
+    val techSet =
+        repositories.asSequence().filterNotNull().map { it.techValue }.fold(mutableSetOf<String>()) { acc, map ->
+            acc.addAll(map.keys); acc
+        }
     val respondent = chatApiProvider.asRespondent()
     val techValue = techSet.associateWith { tech ->
-        val relevantRepos = repositories.asSequence()
+        val relevantRepos = repositories.asSequence().filterNotNull()
             .filter { it.techValue.containsKey(tech) }
             .filter { it.contributionTotal > 0 }
             .filter { it.contributeMap.contains(userInfo.login) }
         val info = relevantRepos.joinToString("\n") {
             val percentage = (it.contributeMap[userInfo.login]!! * 100.toDouble() / it.contributionTotal).formatted()
             """
-                在${it.name}项目（star数为${it.starsCount}），${it.techValue[tech]}，贡献度为$percentage%。
+                在${it.name}项目（star数为${it.starsCount}），${it.techValue[tech]}，贡献占比为$percentage%。
             """.trimIndent()
         }
         val evaluation = respondent.chat(
             """
             =====以下为问答示例=====
             问：
-            在githubInsight项目（star数为100），参与了后端分析逻辑的开发，贡献度为30%。
+            在githubInsight项目（star数为100），参与了后端分析逻辑的开发，贡献占比为30%。
             以上为一个github用户在kotlin方面的仓库贡献履历。请问他在这方面技术水平如何？
             答：熟练Kotlin，尤其是后端开发。
             =====以上为问答示例=====
@@ -82,15 +83,15 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
                     问：
                     熟练Kotlin，尤其是后端开发。
                     以上是对一个github用户在Kotlin方面的技术水平的评价。
-                    请问这个用户在Kotlin方面的技术水平可以打多少分？标准为：会使用-20分；熟练使用-40分；开源贡献很多-60分；开源贡献影响力大-80分；顶级开源开发者-100分
+                    请问这个用户在Kotlin方面的技术水平可以打多少分？标准为：会使用-20分；熟练使用-40分；开源贡献很多-60分；开源贡献影响力大-80分；顶级开源开发者-100分；你应当综合考虑多方面因素，在这个基础上进行增减。
                     答：40
                     =====以上为问答示例=====
                     你应当遵循问答示例的格式进行问答。
-                    回答的内容应当是一个0到100之间的整数，表示用户的技术水平。不准输出其他内容。
+                    回答的内容应当是一个0到100之间的整数，表示用户的技术水平，最好不要是整十的数字，而是56之类的普通数字。不准输出其他内容。
                     
                     $evaluation
                     以上是对一个github用户在${tech}方面的技术水平的评价。
-                    请问这个用户在${tech}方面的技术水平可以打多少分？标准为：会使用-20分；熟练使用-40分；开源贡献很多-60分；开源贡献影响力大-80分；顶级开源开发者-100分
+                    请问这个用户在${tech}方面的技术水平可以打多少分？标准为：会使用-20分；熟练使用-40分；开源贡献很多-60分；开源贡献影响力大-80分；顶级开源开发者-100分；你应当综合考虑多方面因素，在这个基础上进行增减。
                 """.trimIndent()
             ).parseInt()
         }
@@ -99,11 +100,11 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
     ContributionVector(techValue)
 }
 
-suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
+suspend fun Analyser.analyseRepo(repo: String): RepoResult? = coroutineScope {
     repoResultCollection.find(eq("name", repo))
         .firstOrNull()
         ?.let { return@coroutineScope it }
-    val repoInfo = githubSpider.getRepository(repo)
+    val repoInfo = githubSpider.getRepository(repo) ?: return@coroutineScope null
     val contributors = repoInfo.contributors
 
     val readme = repoInfo.readme

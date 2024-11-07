@@ -94,15 +94,15 @@ suspend fun GithubApiProvider.fetchOrganizations(orgsUrl: String): List<Organiza
     }
 }
 
-suspend fun GithubApiProvider.fetchOrganization(login: String): OrganizationResponse {
+suspend fun GithubApiProvider.fetchOrganization(login: String): OrganizationResponse? {
     val orgUrl = "$orgUrl/$login"
     val json = persistence(orgUrl) {
         fetch(orgUrl)
     }
-    try {
-        return decodeFromString<OrganizationResponse>(json)
+    return try {
+        decodeFromString<OrganizationResponse>(json)
     } catch (e: SerializationException) {
-        throw FetchException("fetch organization failed.", e)
+        null
     }
 }
 
@@ -150,14 +150,14 @@ suspend fun GithubApiProvider.fetchRepositories(reposUrl: String): List<Reposito
     }
 }
 
-suspend fun GithubApiProvider.fetchRepository(repoUrl: String): RepositoryResponse {
+suspend fun GithubApiProvider.fetchRepository(repoUrl: String): RepositoryResponse? {
     val json = persistence(repoUrl) {
         fetch(repoUrl)
     }
-    try {
-        return decodeFromString<RepositoryResponse>(json)
+    return try {
+        decodeFromString<RepositoryResponse>(json)
     } catch (e: SerializationException) {
-        throw FetchException("fetch repository failed.", e)
+        null
     }
 }
 
@@ -207,10 +207,10 @@ suspend fun GithubApiProvider.fetchReadme(repoUrl: String): Readme? {
     val json = persistence(readmeUrl) {
         fetch(readmeUrl)
     }
-    try {
-        return decodeFromString<Readme>(json)
+    return try {
+        decodeFromString<Readme>(json)
     } catch (e: SerializationException) {
-        return null
+        null
     }
 }
 
