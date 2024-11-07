@@ -97,7 +97,7 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
         }
         evaluation to score
     }
-    ContributionVector(techValue)
+    ContributionVector(techValue.filter { it.value.second > 0 })
 }
 
 suspend fun Analyser.analyseRepo(repo: String): RepoResult? = coroutineScope {
