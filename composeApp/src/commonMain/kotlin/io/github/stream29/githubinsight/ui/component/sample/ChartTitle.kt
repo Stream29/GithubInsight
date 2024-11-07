@@ -14,7 +14,7 @@ fun ChartTitle(title: String) {
         Text(
             title,
             color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h6,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
