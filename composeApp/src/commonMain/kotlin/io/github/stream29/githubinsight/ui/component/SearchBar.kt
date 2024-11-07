@@ -1,7 +1,11 @@
 package io.github.stream29.githubinsight.ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -25,11 +29,12 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     searchTopic: MutableState<String>
 ) {
+    var text by remember { mutableStateOf("") }
     TextField(
-        value = searchTopic.value,
-        onValueChange = { searchTopic.value = it },
+        value = text,
+        onValueChange = { text = it },
         placeholder = { Text("Search") },
-        modifier = modifier.fillMaxWidth(0.8f).heightIn(min = 56.dp),
+        modifier = modifier.fillMaxWidth(0.65f).heightIn(min = 56.dp),
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.surface
         ),
@@ -40,4 +45,10 @@ fun SearchBar(
             )
         }
     )
+    Button(
+        onClick = { searchTopic.value = text },
+        modifier = Modifier.fillMaxWidth().height(56.dp).padding(4.dp)
+    ) {
+        Text("Search")
+    }
 }

@@ -17,7 +17,7 @@ import io.github.stream29.githubinsight.userList
 
 @Composable
 fun AllUsers(onStateChange: () -> Unit, globalUserLogin: MutableState<String>) {
-    val userList = userList!!
+    var userList = userList!!
     val selectedCountry = remember { mutableStateOf("None") }
     val searchTopic = remember { mutableStateOf("") }
     Column(horizontalAlignment = Alignment.Start) {
@@ -31,6 +31,17 @@ fun AllUsers(onStateChange: () -> Unit, globalUserLogin: MutableState<String>) {
             )
         }
         LazyColumn {
+            if (searchTopic.value.isNotEmpty()) {
+                userList = userList.sortedBy {
+                    it
+                        .userResult
+                        .talentRank
+                        .contributionMap
+                        .getOrElse(searchTopic.value) { Pair(0, 0) }
+                            .second
+                }
+            }
+
             var index = 1
             userList.forEach() {
                 if (selectedCountry.value == "None"

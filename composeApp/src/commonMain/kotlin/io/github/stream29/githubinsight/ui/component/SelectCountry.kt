@@ -22,7 +22,7 @@ fun SelectCountry(selectedCountry: MutableState<String>) {
     var expanded by remember { mutableStateOf(false) }
     val countries = listOf("None","China","America","UK","Japan","Korea","Germany","France","Italy","Canada","Australia")
     Button(
-        modifier = Modifier.width(120.dp).height(56.dp).padding(4.dp),
+        modifier = Modifier.width(80.dp).height(56.dp).padding(4.dp),
         onClick = { expanded = true }
     ) {
         Text(text = selectedCountry.value)
