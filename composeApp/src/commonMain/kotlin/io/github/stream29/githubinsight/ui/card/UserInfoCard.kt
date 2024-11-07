@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.github.stream29.githubinsight.common.entities.ClientEntities
-import io.github.stream29.githubinsight.user
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

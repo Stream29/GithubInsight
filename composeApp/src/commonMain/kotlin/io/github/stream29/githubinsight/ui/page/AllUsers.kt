@@ -26,7 +26,7 @@ fun AllUsers(onStateChange: () -> Unit, globalUserLogin: MutableState<String>) {
             SearchBar(modifier = Modifier.align(Alignment.CenterVertically))
         }
         LazyColumn {
-            var index = 1;
+            var index = 1
             userList.forEach() {
                 item {
                     UserInfoCard(index.toString(), globalUserLogin, it, onStateChange)

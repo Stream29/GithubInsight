@@ -20,7 +20,6 @@ import io.github.koalaplot.core.style.LineStyle
 import io.github.koalaplot.core.util.ExperimentalKoalaPlotApi
 import io.github.koalaplot.core.util.toString
 import io.github.stream29.githubinsight.common.entities.ContributionVector
-import io.github.stream29.githubinsight.common.entities.UserResult
 import io.github.stream29.githubinsight.ui.component.sample.ChartTitle
 import io.github.stream29.githubinsight.ui.component.sample.paddingMod
 
@@ -36,7 +35,16 @@ fun UserRadarChart(thumbnail: Boolean, title: String, talentRank: ContributionVe
         title = { ChartTitle(title) },
         legendLocation = LegendLocation.BOTTOM
     ) {
-        val ram = rememberFloatRadialAxisModel(listOf(0f, 20f, 40f, 60f, 80f, 100f)) // population in millions
+        val ram = rememberFloatRadialAxisModel(
+            listOf(
+                0f,
+                20f,
+                40f,
+                60f,
+                80f,
+                100f
+            )
+        ) // population in millions
         val aam = rememberCategoryAngularAxisModel(keys)
 
         val angularAxisGridLineStyle = if (thumbnail) {
@@ -49,7 +57,7 @@ fun UserRadarChart(thumbnail: Boolean, title: String, talentRank: ContributionVe
             ram,
             aam,
             radialAxisLabels = { if (!thumbnail) Text(it.toString(1)) },
-            { if (!thumbnail) Text(it.toString()) },
+            { if (!thumbnail) Text(it) },
             polarGraphProperties = PolarGraphDefaults.PolarGraphPropertyDefaults()
                 .copy(
                     angularAxisGridLineStyle = angularAxisGridLineStyle,
@@ -57,8 +65,8 @@ fun UserRadarChart(thumbnail: Boolean, title: String, talentRank: ContributionVe
                 )
         ) {
             val polarList: MutableList<PolarPoint<Float, String>> = mutableListOf()
-            for(index in keys.indices){
-                val point = PolarPoint<Float,String>(values[index], keys[index])
+            for (index in keys.indices) {
+                val point = PolarPoint<Float, String>(values[index], keys[index])
                 polarList.add(point)
             }
             PolarPlotSeries(
