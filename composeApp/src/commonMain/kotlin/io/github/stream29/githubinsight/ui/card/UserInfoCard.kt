@@ -18,21 +18,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import io.github.stream29.githubinsight.type.UserInfo
+import io.github.stream29.githubinsight.common.entities.ClientEntities
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserInfoCard(
     index: String,
-    userInfo: UserInfo,
     globalUserLogin: MutableState<String>,
+    user: ClientEntities,
     onStateChange: () -> Unit
 ) {
     Card(
         contentColor = MaterialTheme.colors.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
         onClick = {
-            globalUserLogin.value = userInfo.name
+            globalUserLogin.value = user.userInfo.name
             onStateChange()
         }
     ) {
@@ -47,7 +47,7 @@ fun UserInfoCard(
                 modifier = Modifier.weight(1f)
             )
 
-            userInfo.bio?.let {
+            user.userInfo.bio?.let {
                 Text(
                     text = it,
                     modifier = Modifier.padding(end = 8.dp)
@@ -55,12 +55,12 @@ fun UserInfoCard(
             }
 
             AsyncImage(
-                model = userInfo.avatarUrl,
+                model = user.userInfo.avatarUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(48.dp).clip(CircleShape)
             )
-            Text(text = userInfo.login, modifier = Modifier.padding(start = 8.dp))
+            Text(text = user.userInfo.login, modifier = Modifier.padding(start = 8.dp))
         }
     }
 }

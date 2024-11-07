@@ -17,6 +17,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,12 +26,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.github.koalaplot.sample.polar.UserRadarChart
-import io.github.stream29.githubinsight.entityMapExample
-import io.github.stream29.githubinsight.type.Entity
+import io.github.stream29.githubinsight.UserEntities
+import io.github.stream29.githubinsight.user
 
 @Composable
-fun UserDetail(onStateChange: () -> Unit, userLogin: String) {
-    val user = entityMapExample[userLogin] as Entity
+fun UserDetail(onStateChange: () -> Unit, userLogin: MutableState<String>) {
+//    user = UserEntities(userLogin.value)
+    val user = user!!
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         topBar = {
@@ -62,14 +64,16 @@ fun UserDetail(onStateChange: () -> Unit, userLogin: String) {
         Column(
             horizontalAlignment = Alignment.Start
         ) {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 AsyncImage(
                     model = user.userInfo.avatarUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(200.dp).padding(8.dp).clip(CircleShape)
+                    modifier = Modifier.size(120.dp).clip(CircleShape)
                 )
-                UserRadarChart(true, user.userInfo.name)
+                UserRadarChart(false, "contribution", user.userResult.talentRank)
             }
             Text(
                 text = "Name: ${user.userInfo.name}",
@@ -105,34 +109,14 @@ fun UserDetail(onStateChange: () -> Unit, userLogin: String) {
 
             Divider(
                 modifier = Modifier.fillMaxWidth(),
-                thickness = 3.dp
+                thickness = 5.dp
             )
 
             LazyColumn {
                 item {
                     user.userResult.talentRank.contributionMap.forEach {
                         Text(
-                            text = "${it.key}: ${it.value}",
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        Text(
-                            text = "${it.key}: ${it.value}",
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        Text(
-                            text = "${it.key}: ${it.value}",
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        Text(
-                            text = "${it.key}: ${it.value}",
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        Text(
-                            text = "${it.key}: ${it.value}",
+                            text = "${it.key} ${it.value.second}: ${it.value.first}",
                             style = MaterialTheme.typography.h5,
                             modifier = Modifier.padding(8.dp)
                         )

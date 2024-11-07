@@ -11,14 +11,13 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,8 +28,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,7 +38,8 @@ fun Form(
     form: MutableMap<String, String>,
     type: String,
     keyList: Array<String>? = null,
-    onStateChange: () -> Unit
+    onStateChange: () -> Unit,
+    globalValue: MutableState<String>
 ) {
     val brush = remember {
         Brush.linearGradient(
@@ -49,7 +47,6 @@ fun Form(
         )
     }
     var isMenuOpen by remember { mutableStateOf(false) }
-    var isVisualTransformation by remember { mutableStateOf(false) }
     var buttonText by remember { mutableStateOf("Select Model") }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -69,22 +66,13 @@ fun Form(
                 onValueChange = { form[key] = it },
                 label = { Text(type) },
                 trailingIcon = {
-                    IconToggleButton(
-                        checked = isVisualTransformation,
-                        onCheckedChange = { isVisualTransformation = it }
-                    ) {
-                        IconButton(onClick = { isVisualTransformation = !isVisualTransformation }) {
-                            //TODO: change icon
-                            Icon(
-                                imageVector = Icons.Filled.Edit,
-                                contentDescription = "isVisible"
-                            )
-                        }
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Edit"
+                    )
                 },
                 placeholder = { Text("Please Enter $type") },
                 textStyle = TextStyle(fontSize = 16.sp),
-                visualTransformation = if (isVisualTransformation) VisualTransformation.None else PasswordVisualTransformation()
             )
         }
 
@@ -110,7 +98,7 @@ fun Form(
             }
             Button(
                 onClick = {
-                    //TODO: send request
+                    globalValue.value = form[type]!!
                     onStateChange()
                 },
                 content = {

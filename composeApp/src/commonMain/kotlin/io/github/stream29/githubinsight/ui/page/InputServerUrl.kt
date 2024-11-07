@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import io.github.stream29.githubinsight.ui.component.Form
 
 @Composable
-fun InputUserLogin(
+fun InputServerUrl(
     onStateChange: () -> Unit,
-    globalUserLogin: MutableState<String>
+    globalUrl: MutableState<String>
 ) {
-    val userMap = remember { mutableStateMapOf("user-login" to "") }
+    val keyMap = remember { mutableStateMapOf("base-url" to "") }
     Row(
         modifier = Modifier.fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically
@@ -27,10 +27,10 @@ fun InputUserLogin(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Form(
-                form = userMap,
-                type = "user-login",
+                form = keyMap,
+                type = "base-url",
                 onStateChange = onStateChange,
-                globalValue = globalUserLogin
+                globalValue = globalUrl
             )
         }
     }

@@ -9,6 +9,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,15 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SelectCountry() {
+fun SelectCountry(selectedCountry: MutableState<String>) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedCountry by remember { mutableStateOf("None") }
     val countries = listOf("None","China","America","UK","Japan","Korea","Germany","France","Italy","Canada","Australia")
     Button(
         modifier = Modifier.width(120.dp).height(56.dp).padding(4.dp),
         onClick = { expanded = true }
     ) {
-        Text(text = selectedCountry)
+        Text(text = selectedCountry.value)
     }
     DropdownMenu(
         expanded = expanded,
@@ -34,7 +34,7 @@ fun SelectCountry() {
     ) {
         countries.forEach { country ->
             DropdownMenuItem(onClick = {
-                selectedCountry = country
+                selectedCountry.value = country
                 expanded = false
             }) {
                 Text(text = country)

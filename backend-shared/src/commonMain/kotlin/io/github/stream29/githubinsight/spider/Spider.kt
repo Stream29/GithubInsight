@@ -56,10 +56,9 @@ class Spider(
             collaborators = collaborators.await(),
             commits = commits.await(),
             tags = tags.await(),
-            readmeContent = readme.await()?.content ?: "",
+            readmeContent = EntityProcessor.toReadmeContent(readme.await()?.content ?: ""),
         )
     }
-
 
     // get organization information
     suspend fun getOrganization(login: String): Organization = coroutineScope {
