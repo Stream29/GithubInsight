@@ -19,7 +19,6 @@ data class RemoteBackendApiProvider(
     }
 
     override suspend fun allUser(begin: Int, end: Int): List<ClientEntities> {
-        TODO("Not yet implemented")
+        return httpClient.get("$baseUrl/users?begin=$begin&end=$end").body()
     }
-
 }
