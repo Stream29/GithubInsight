@@ -21,7 +21,7 @@ class AppTest {
         val githubApiProvider = backendConfig.toSpider(mongoDatabase)
         val analyser = Analyser(mongoDatabase, chatApiProvider, githubApiProvider)
         runBlocking {
-            println(analyser.analyseUser("ConstasJ"))
+//            println(analyser.analyseUser("ConstasJ"))
             println(analyser.analyseUser("Stream29"))
         }
     }

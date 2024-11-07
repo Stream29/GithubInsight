@@ -3,7 +3,9 @@ package io.github.stream29.githubinsight.common.entities
 import io.github.stream29.githubinsight.common.entities.ContributionVector
 import io.github.stream29.githubinsight.common.entities.UserInfo
 import io.github.stream29.githubinsight.common.entities.UserResult
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ClientEntities(
     val userInfo: UserInfo,
     val userResult: UserResult,
