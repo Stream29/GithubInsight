@@ -5,6 +5,8 @@ import io.github.stream29.githubinsight.common.entities.Repository
 import io.github.stream29.githubinsight.common.entities.UserCommit
 import io.github.stream29.githubinsight.common.entities.UserInfo
 import io.github.stream29.githubinsight.spider.*
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 class EntityProcessor {
     companion object {
@@ -73,6 +75,15 @@ class EntityProcessor {
                 .asSequence()
                 .map { it.login }
                 .toList()
+        }
+
+        @OptIn(ExperimentalEncodingApi::class)
+        fun toReadmeContent(readmeBase64: String): String {
+            val base64List = readmeBase64.split("\n")
+            return base64List.asSequence()
+                .map { Base64.decode(it).decodeToString() }
+                .toList()
+                .joinToString("")
         }
 
         fun toOrganization(organizationResponse: OrganizationResponse,
