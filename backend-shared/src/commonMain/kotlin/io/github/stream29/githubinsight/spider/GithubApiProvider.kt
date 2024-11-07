@@ -1,10 +1,7 @@
 package io.github.stream29.githubinsight.spider
 
 import com.mongodb.client.model.Filters.eq
-import com.mongodb.kotlin.client.coroutine.MongoClient
-import io.github.stream29.githubinsight.BackendConfig
-import io.github.stream29.githubinsight.common.entities.UserInfo
-import io.github.stream29.githubinsight.fromYamlString
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import io.github.stream29.githubinsight.httpClient
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -13,20 +10,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
-import java.io.File
 
 class GithubApiProvider(
-    val authToken: String
+    val authToken: String,
+    // FIXME: 需传入mongoDatabase
+    mongoDatabase: MongoDatabase,
 ) {
     private val json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true
     }
-    private val backendConfig = File("src/jvmTest/resources/config.yml")
-        .readText()
-        .let { BackendConfig.fromYamlString(it) }
-    private val mongoClient = backendConfig.mongodb.connectionString.let { MongoClient.create(it) }
-    private val mongoDatabase = mongoClient.getDatabase("github_insight")
     val userResponseCollection = mongoDatabase.getCollection<UserResponse>("api_user")
     val jsonCollection = mongoDatabase.getCollection<JsonCollection>("api_json")
 
@@ -44,25 +37,6 @@ class GithubApiProvider(
         return responseBody
     }
 }
-
-suspend fun GithubApiProvider.getUser(login: String): UserInfo =
-    fetchUser(login).run {
-        UserInfo(
-            company = company,
-            blog = blog,
-            location = location,
-            login = login,
-            name = name ?: login,
-            avatarUrl = avatarUrl,
-            bio = bio,
-            email = email,
-            organizations = listOf("todo"),
-            followers = listOf("todo"),
-            following = listOf("todo"),
-            subscriptions = listOf("todo"),
-            repos = listOf("todo"),
-        )
-    }
 
 suspend fun GithubApiProvider.fetchBase(login: String): ResponseCollection = coroutineScope {
     val userResponse = fetchUser(login)
