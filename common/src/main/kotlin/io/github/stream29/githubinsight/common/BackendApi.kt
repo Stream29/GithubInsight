@@ -1,5 +1,19 @@
 package io.github.stream29.githubinsight.common
 
-interface BackendApiProvider{
+import io.github.stream29.githubinsight.common.entities.ClientEntities
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
 
+interface BackendApiProvider {
+    suspend fun getUser(login: String): ClientEntities
+}
+
+data class RemoteBackendApiProvider(
+    val httpClient: HttpClient,
+    val baseUrl: String
+) : BackendApiProvider {
+    override suspend fun getUser(login: String): ClientEntities {
+        return httpClient.get("$baseUrl/users/$login").body()
+    }
 }
