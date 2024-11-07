@@ -49,7 +49,10 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
     }
     val respondent = chatApiProvider.asRespondent()
     val techValue = techSet.associateWith { tech ->
-        val relevantRepos = repositories.asSequence().filter { it.techValue.containsKey(tech) }
+        val relevantRepos = repositories.asSequence()
+            .filter { it.techValue.containsKey(tech) }
+            .filter { it.contributionTotal > 0 }
+            .filter { it.contributeMap.contains(userInfo.login) }
         val info = relevantRepos.joinToString("\n") {
             val percentage = (it.contributeMap[userInfo.login]!! * 100.toDouble() / it.contributionTotal).formatted()
             """
