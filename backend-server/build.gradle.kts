@@ -19,4 +19,5 @@ dependencies {
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.ktor.serialization.kotlinx.json)
     implementation(libs.streamlin)
+    implementation("io.ktor:ktor-server-call-logging-jvm:3.0.1")
 }
