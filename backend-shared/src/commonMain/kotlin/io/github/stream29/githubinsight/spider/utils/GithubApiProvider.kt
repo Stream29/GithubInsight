@@ -7,14 +7,11 @@ import io.github.stream29.githubinsight.spider.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 
 class GithubApiProvider(
     val authToken: String,
-    // FIXME: 需传入mongoDatabase
     mongoDatabase: MongoDatabase,
 ) {
     private val json = Json {
@@ -37,27 +34,6 @@ class GithubApiProvider(
         }.bodyAsText()
         return responseBody
     }
-}
-
-suspend fun GithubApiProvider.fetchBase(login: String): ResponseCollection = coroutineScope {
-    val userResponse = fetchUser(login)
-
-    val organizationsResponse = async { fetchOrganizations(userResponse.organizationsUrl) }
-    val reposResponse = async { fetchRepositories(userResponse.reposUrl) }
-    val subscriptionsResponse = async { fetchSubscriptions(userResponse.subscriptionsUrl) }
-    val starredResponse = async { fetchStarred(userResponse.starredUrl) }
-    val followersResponse = async { fetchUsers(userResponse.followersUrl) }
-    val followingResponse = async { fetchUsers(userResponse.followingUrl) }
-
-    ResponseCollection(
-        userResponse,
-        organizationsResponse.await(),
-        reposResponse.await(),
-        subscriptionsResponse.await(),
-        starredResponse.await(),
-        followersResponse.await(),
-        followingResponse.await(),
-    )
 }
 
 suspend fun GithubApiProvider.fetchUser(login: String): UserResponse {
@@ -108,11 +84,34 @@ suspend fun GithubApiProvider.fetchOrganization(login: String): OrganizationResp
     return decodeFromString<OrganizationResponse>(json)
 }
 
-suspend fun GithubApiProvider.fetchOrgMembers(membersUrl: String): List<UserResponse> {
-    val json = persistence(membersUrl) {
-        fetch(membersUrl.replace("{/member}", ""))
+suspend fun GithubApiProvider.fetchAnyPages(baseUrl: String, start: Int, pages: Int): List<String> {
+    var page = start
+    val result: MutableList<String> = mutableListOf()
+    while (page < pages || pages == -1) {
+        val pageUrl = "$baseUrl?per_page=$perPage&page=$page"
+        val json = persistence(pageUrl) {
+            fetch(pageUrl)
+        }
+        if (json == "[]") {
+            break
+        }
+        page++
+        result.add(json)
     }
-    return decodeFromString<List<UserResponse>>(json)
+    return result
+}
+
+fun mergeJsons(jsons: List<String>): String {
+    val json = jsons.joinToString(separator = ",") {
+        it.removePrefix("[").removeSuffix("]")
+    }
+    return "[$json]"
+}
+
+suspend fun GithubApiProvider.fetchOrgMembers(membersUrl: String): List<UserResponse> {
+    val jsons = fetchAnyPages(membersUrl.replace("{/member}", ""), 1, -1)
+    val mergedJson = mergeJsons(jsons)
+    return decodeFromString<List<UserResponse>>(mergedJson)
 }
 
 suspend fun GithubApiProvider.fetchRepositories(reposUrl: String): List<RepositoryResponse> {
@@ -248,3 +247,4 @@ const val baseUrl = "https://api.github.com"
 const val UserUrl = "$baseUrl/users"
 const val RepoUrl = "$baseUrl/repos"
 const val orgUrl = "$baseUrl/orgs"
+const val perPage = 100
