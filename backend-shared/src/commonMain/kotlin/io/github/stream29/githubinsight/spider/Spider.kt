@@ -49,7 +49,7 @@ class Spider (
             collaborators = collaborators,
             commits = commits,
             tags = tags,
-            readmeContent = readme?.content ?: "",
+            readmeContent = EntityProcessor.toReadmeContent(readme?.content ?: ""),
         )
     }
 
