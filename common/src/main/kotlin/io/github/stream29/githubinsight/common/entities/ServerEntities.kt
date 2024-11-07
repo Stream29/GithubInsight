@@ -32,7 +32,8 @@ data class UserInfo(
 data class RepoResult(
     val name: String,
     val techValue: Map<String, String>,
-    val contributeMap: Map<String, Int>
+    val contributeMap: Map<String, Int>,
+    val contributionTotal: Int
 )
 
 @Serializable

@@ -44,7 +44,54 @@ suspend fun Analyser.analyseTalentRank(userInfo: UserInfo): ContributionVector =
     val repositories = userInfo.repos.map {
         async { analyseRepo(it) }
     }.awaitAll()
-    ContributionVector(mapOf("Java" to ("很强" to 1)))
+    val techSet = repositories.asSequence().map { it.techValue }.fold(mutableSetOf<String>()) { acc, map ->
+        acc.addAll(map.keys); acc
+    }
+    val respondent = chatApiProvider.asRespondent()
+    val techValue = techSet.associateWith { tech ->
+        val relevantRepos = repositories.asSequence().filter { it.techValue.containsKey(tech) }
+        val info = relevantRepos.joinToString("\n") {
+            """
+                在${it.name}项目（star数为${it.contributeMap}），${it.techValue[tech]}，贡献度为${it.contributeMap[userInfo.login]!! * 100.toDouble() / it.contributionTotal}%。
+            """.trimIndent()
+        }
+        val evaluation = respondent.chat(
+            """
+            =====以下为问答示例=====
+            问：
+            在githubInsight项目（star数为100），参与了后端分析逻辑的开发，贡献度为30%。
+            以上为一个github用户在kotlin方面的仓库贡献履历。请问他在这方面技术水平如何？
+            答：熟练Kotlin，尤其是后端开发。
+            =====以上为问答示例=====
+            你应当遵循问答示例的格式进行问答。
+            回答的内容应该是一个短句，指出用户的技术水平。不准输出其他内容。
+            
+            $info
+            以上为一个github用户在${tech}方面的仓库贡献履历。请问他在这方面技术水平如何？
+        """.trimIndent()
+        )
+        val score = withRetry(10) {
+            respondent.chat(
+                """
+                    =====以下为问答示例=====
+                    问：
+                    熟练Kotlin，尤其是后端开发。
+                    以上是对一个github用户在Kotlin方面的技术水平的评价。
+                    请问这个用户在Kotlin方面的技术水平可以打多少分？标准为：会使用-20分；熟练使用-40分；开源贡献很多-60分；开源贡献影响力大-80分；顶级开源开发者-100分
+                    答：40
+                    =====以上为问答示例=====
+                    你应当遵循问答示例的格式进行问答。
+                    回答的内容应当是一个0到100之间的整数，表示用户的技术水平。不准输出其他内容。
+                    
+                    $evaluation
+                    以上是对一个github用户在${tech}方面的技术水平的评价。
+                    请问这个用户在${tech}方面的技术水平可以打多少分？标准为：会使用-20分；熟练使用-40分；开源贡献很多-60分；开源贡献影响力大-80分；顶级开源开发者-100分
+                """.trimIndent()
+            ).toInt()
+        }
+        evaluation to score
+    }
+    ContributionVector(techValue)
 }
 
 suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
@@ -61,11 +108,13 @@ suspend fun Analyser.analyseRepo(repo: String): RepoResult = coroutineScope {
             contributeMap = contributors.associateWith { contributor ->
                 repoInfo.commits.count { it.author == contributor }
             },
+            contributionTotal = repoInfo.commits.size
         )
         else RepoResult(
             name = repo,
             techValue = emptyMap(),
             contributeMap = emptyMap(),
+            0
         )
     launch {
         repoResultCollection.insertOne(result)
@@ -154,25 +203,26 @@ suspend fun Analyser.inferNationFrom(info: String): Estimated<String> = coroutin
             有这样一位用户，$info，请问他最可能在哪个国家？
         """.trimIndent()
         )
-    val belief = respondent.chat(
-        """
-        =====以下为问答示例=====
-        问：从信息“用户名为Tom，位置为New York”推断所在国家为美国的置信度是多少？
-        答：100
-        问：从信息“用户名为张三”推断所在国家为中国的置信度是多少？
-        答：30
-        =====以上为问答示例=====
-        你应当遵循问答示例的格式进行问答。
-        回答的内容应当是一个0到100之间的整数，表示你对这个推断的置信度。不准输出其他内容。
-        从信息“${info}”推断所在国家为${nationInferred}的置信度是多少？
-    """.trimIndent()
-    )
-    withRetry(10) {
-        Estimated(belief.toInt(), nationInferred)
-    }
+    val belief =
+        withRetry(10) {
+            respondent.chat(
+                """
+                    =====以下为问答示例=====
+                    问：从信息“用户名为Tom，位置为New York”推断所在国家为美国的置信度是多少？
+                    答：100
+                    问：从信息“用户名为张三”推断所在国家为中国的置信度是多少？
+                    答：30
+                    =====以上为问答示例=====
+                    你应当遵循问答示例的格式进行问答。
+                    回答的内容应当是一个0到100之间的整数，表示你对这个推断的置信度。不准输出其他内容。
+                    从信息“${info}”推断所在国家为${nationInferred}的置信度是多少？
+                """.trimIndent()
+            ).toInt()
+        }
+    Estimated(belief, nationInferred)
 }
 
-fun <T> withRetry(count: Int, block: () -> T): T {
+suspend fun <T> withRetry(count: Int, block: suspend () -> T): T {
     var currentCount = 0
     while (true) {
         try {
