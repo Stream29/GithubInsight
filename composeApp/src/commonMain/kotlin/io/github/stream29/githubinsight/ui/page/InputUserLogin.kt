@@ -9,11 +9,11 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.github.stream29.githubinsight.ui.card.InputPathCard
+import io.github.stream29.githubinsight.ui.card.InputLoginCard
 
 @Composable
-fun InputPath(onStateChange: () -> Unit) {
-    val userMap = remember { mutableStateMapOf("user-homepage-address" to "") }
+fun InputUserLogin(onStateChange: () -> Unit) {
+    val userMap = remember { mutableStateMapOf("user-login" to "") }
     Row(
         modifier = Modifier.fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically
@@ -22,7 +22,7 @@ fun InputPath(onStateChange: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            InputPathCard(userMap, onStateChange)
+            InputLoginCard(userMap, onStateChange)
         }
     }
 }

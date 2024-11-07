@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import io.github.stream29.githubinsight.ui.component.Form
 
 @Composable
-fun InputPathCard(
+fun InputLoginCard(
     keyMap: MutableMap<String, String>,
     onStateChange: () -> Unit
 ) {
