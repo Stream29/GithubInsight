@@ -31,7 +31,7 @@ import io.github.stream29.githubinsight.user
 
 @Composable
 fun UserDetail(onStateChange: () -> Unit, userLogin: MutableState<String>) {
-    user = UserEntities(userLogin.value)
+//    user = UserEntities(userLogin.value)
     val user = user!!
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
@@ -64,14 +64,16 @@ fun UserDetail(onStateChange: () -> Unit, userLogin: MutableState<String>) {
         Column(
             horizontalAlignment = Alignment.Start
         ) {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 AsyncImage(
                     model = user.userInfo.avatarUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(200.dp).padding(8.dp).clip(CircleShape)
+                    modifier = Modifier.size(120.dp).clip(CircleShape)
                 )
-                UserRadarChart(true, user.userInfo.name, user.userResult.talentRank)
+                UserRadarChart(false, "contribution", user.userResult.talentRank)
             }
             Text(
                 text = "Name: ${user.userInfo.name}",
@@ -114,7 +116,7 @@ fun UserDetail(onStateChange: () -> Unit, userLogin: MutableState<String>) {
                 item {
                     user.userResult.talentRank.contributionMap.forEach {
                         Text(
-                            text = "${it.key}: ${it.value.first}",
+                            text = "${it.key} ${it.value.second}: ${it.value.first}",
                             style = MaterialTheme.typography.h5,
                             modifier = Modifier.padding(8.dp)
                         )
