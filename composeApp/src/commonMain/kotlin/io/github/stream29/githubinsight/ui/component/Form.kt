@@ -69,22 +69,13 @@ fun Form(
                 onValueChange = { form[key] = it },
                 label = { Text(type) },
                 trailingIcon = {
-                    IconToggleButton(
-                        checked = isVisualTransformation,
-                        onCheckedChange = { isVisualTransformation = it }
-                    ) {
-                        IconButton(onClick = { isVisualTransformation = !isVisualTransformation }) {
-                            //TODO: change icon
-                            Icon(
-                                imageVector = Icons.Filled.Edit,
-                                contentDescription = "isVisible"
-                            )
-                        }
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Edit"
+                    )
                 },
                 placeholder = { Text("Please Enter $type") },
                 textStyle = TextStyle(fontSize = 16.sp),
-                visualTransformation = if (isVisualTransformation) VisualTransformation.None else PasswordVisualTransformation()
             )
         }
 
