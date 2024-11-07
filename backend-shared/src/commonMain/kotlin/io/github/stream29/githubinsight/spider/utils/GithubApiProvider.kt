@@ -39,27 +39,6 @@ class GithubApiProvider(
     }
 }
 
-suspend fun GithubApiProvider.fetchBase(login: String): ResponseCollection = coroutineScope {
-    val userResponse = fetchUser(login)
-
-    val organizationsResponse = async { fetchOrganizations(userResponse.organizationsUrl) }
-    val reposResponse = async { fetchRepositories(userResponse.reposUrl) }
-    val subscriptionsResponse = async { fetchSubscriptions(userResponse.subscriptionsUrl) }
-    val starredResponse = async { fetchStarred(userResponse.starredUrl) }
-    val followersResponse = async { fetchUsers(userResponse.followersUrl) }
-    val followingResponse = async { fetchUsers(userResponse.followingUrl) }
-
-    ResponseCollection(
-        userResponse,
-        organizationsResponse.await(),
-        reposResponse.await(),
-        subscriptionsResponse.await(),
-        starredResponse.await(),
-        followersResponse.await(),
-        followingResponse.await(),
-    )
-}
-
 suspend fun GithubApiProvider.fetchUser(login: String): UserResponse {
     userResponseCollection.find(eq("login", login))
         .firstOrNull()

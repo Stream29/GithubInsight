@@ -1,6 +1,8 @@
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.github.stream29.githubinsight.BackendConfig
+import io.github.stream29.githubinsight.common.entities.Organization
 import io.github.stream29.githubinsight.common.entities.Repository
+import io.github.stream29.githubinsight.common.entities.UserInfo
 import io.github.stream29.githubinsight.fromYamlString
 import io.github.stream29.githubinsight.spider.*
 import io.github.stream29.githubinsight.spider.utils.BalancingApiProvider
@@ -35,7 +37,9 @@ class SpiderTest {
         }
 
         runBlocking {
+            println(json.encodeToString(UserInfo.serializer(), spider.getUserInfo("Moistrocic")))
             println(json.encodeToString(Repository.serializer(), spider.getRepository("Moistrocic/empty-test")))
+            println(json.encodeToString(Organization.serializer(), spider.getOrganization("JetBrains")))
         }
     }
 }

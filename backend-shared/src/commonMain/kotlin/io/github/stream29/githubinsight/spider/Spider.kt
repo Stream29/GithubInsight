@@ -11,14 +11,28 @@ class Spider (
     private val balancingApiProvider: BalancingApiProvider
 ) {
     suspend fun getUserInfo(login: String): UserInfo {
-        val responseCollection = balancingApiProvider.execute { a ->
-            a.fetchBase(login)
-        }
-        return EntityProcessor.toUserInfo(responseCollection)
+        val userResponse = balancingApiProvider.execute { a -> a.fetchUser(login) }
+        val organizationsResponse = balancingApiProvider.execute { a -> a.fetchOrganizations(userResponse.organizationsUrl) }
+        val reposResponse = balancingApiProvider.execute { a -> a.fetchRepositories(userResponse.reposUrl) }
+        val subscriptionsResponse = balancingApiProvider.execute { a -> a.fetchSubscriptions(userResponse.subscriptionsUrl) }
+        val starredResponse = balancingApiProvider.execute { a -> a.fetchStarred(userResponse.starredUrl) }
+        val followersResponse = balancingApiProvider.execute { a -> a.fetchUsers(userResponse.followersUrl) }
+        val followingResponse = balancingApiProvider.execute { a -> a.fetchUsers(userResponse.followingUrl) }
+        return EntityProcessor.toUserInfo(
+            ResponseCollection(
+                userResponse = userResponse,
+                orgsResponse = organizationsResponse,
+                reposResponse = reposResponse,
+                subscriptionsResponse = subscriptionsResponse,
+                starredresponse = starredResponse,
+                followersResponse = followersResponse,
+                followingResponse = followingResponse,
+            )
+        )
     }
 
     // get a repository all information
-    suspend fun getRepository(repoFullName: String): Repository = coroutineScope {
+    suspend fun getRepository(repoFullName: String): Repository {
         val repositoryResponse = balancingApiProvider.execute { a ->
             a.fetchRepository("$RepoUrl/$repoFullName")
         }
@@ -29,15 +43,15 @@ class Spider (
         val commits = balancingApiProvider.execute { a -> a.fetchCommits(repositoryResponse.commitsUrl) }
         val tags = balancingApiProvider.execute { a -> a.fetchTags(repositoryResponse.tagsUrl) }
         val readme = balancingApiProvider.execute { a -> a.fetchReadme(repositoryResponse.url) }
-        EntityProcessor.toRepository(
-            repositoryResponse,
-            contributors,
-            languages,
-            subscribers,
-            collaborators,
-            commits,
-            tags,
-            readme?.content ?: "",
+        return EntityProcessor.toRepository(
+            repositoryResponse = repositoryResponse,
+            contributors = contributors,
+            languages = languages,
+            subscribers = subscribers,
+            collaborators = collaborators,
+            commits = commits,
+            tags = tags,
+            readmeContent = readme?.content ?: "",
         )
     }
 
@@ -46,8 +60,8 @@ class Spider (
         val organizationResponse = balancingApiProvider.execute { a -> a.fetchOrganization(login) }
         val organizationMembers = balancingApiProvider.execute { a -> a.fetchOrgMembers(organizationResponse.membersUrl) }
         EntityProcessor.toOrganization(
-            organizationResponse,
-            organizationMembers,
+            organizationResponse = organizationResponse,
+            members = organizationMembers,
         )
     }
 }
